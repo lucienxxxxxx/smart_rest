@@ -36,10 +36,6 @@ public class UserIDBase64 {
      * 用户id加密
      *
      *
-     * 乐字节：专注线上IT培训
-     * 答疑老师微信：lezijie
-     * @param userID 用户id
-     * @return java.lang.String
      */
 	public static String encoderUserID(Integer userID){
 		String base64UserIDEncoded = Base64.getEncoder().encodeToString((userID + "").getBytes());

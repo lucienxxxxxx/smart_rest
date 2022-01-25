@@ -2,6 +2,7 @@ package com.pitaya.smart_rest;
 
 import com.alibaba.fastjson.JSON;
 import com.pitaya.smart_rest.base.ResultInfo;
+import com.pitaya.smart_rest.exceptions.AuthException;
 import com.pitaya.smart_rest.exceptions.NoLoginException;
 import com.pitaya.smart_rest.exceptions.ParamsException;
 import org.springframework.stereotype.Component;
@@ -67,6 +68,11 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
                     modelAndView.addObject("code", p.getCode());
                     modelAndView.addObject("msg", p.getMsg());
 
+                }else if (ex instanceof AuthException) { // 认证异常
+                    AuthException a  = (AuthException) ex;
+                    // 设置异常信息
+                    modelAndView.addObject("code",a.getCode());
+                    modelAndView.addObject("msg",a.getMsg());
                 }
                 return modelAndView;
 
@@ -77,13 +83,17 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
                 // 设置默认的异常处理
                 ResultInfo resultInfo = new ResultInfo();
                 resultInfo.setCode(500);
-                resultInfo.setMsg("异常异常，请重试！");
+                resultInfo.setMsg("异常，请重试！");
 
                 // 判断异常类型是否是自定义异常
                 if (ex instanceof ParamsException) {
                     ParamsException p = (ParamsException) ex;
                     resultInfo.setCode(p.getCode());
                     resultInfo.setMsg(p.getMsg());
+                }else if (ex instanceof AuthException) { // 认证异常
+                    AuthException a = (AuthException) ex;
+                    resultInfo.setCode(a.getCode());
+                    resultInfo.setMsg(a.getMsg());
                 }
                 // 设置响应类型及编码格式（响应JSON格式的数据）
                 response.setContentType("application/json;charset=UTF-8");

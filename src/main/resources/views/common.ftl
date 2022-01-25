@@ -4,6 +4,7 @@
 <!--css部分-->
 <link rel="stylesheet" href="${ctx}/assets/libs/layui/css/layui.css"/>
 <link rel="stylesheet" href="${ctx}/assets/module/admin.css?v=316"/>
+<link rel="stylesheet" href="${ctx}/assets/css/formSelects-v4.css" media="all">
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>

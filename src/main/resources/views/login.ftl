@@ -39,11 +39,6 @@
                                lay-verType="tips" lay-verify="required" required/>
                     </div>
                 </div>
-
-                <div class="layui-form-item">
-                    <a href="javascript:;" class="layui-link">帐号注册</a>
-                    <a href="javascript:;" class="layui-link pull-right">忘记密码？</a>
-                </div>
                 <div class="layui-form-item">
                     <button lay-filter="login-submit" class="layui-btn layui-btn-fluid" lay-submit>登 录</button>
                 </div>

@@ -28,7 +28,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(noLoginInterceptor())
                 // 设置需要被拦截的资源
                 .addPathPatterns("/**") // 默认拦截所有的资源
-                // 设置不需要被拦截的资源
+                // 设置不需要被拦截的资源   页面资源文件     登录接口   登录页面
                 .excludePathPatterns("/assets/**", "/toLogin","/login");
     }
 }

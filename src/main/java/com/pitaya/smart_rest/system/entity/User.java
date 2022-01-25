@@ -1,8 +1,14 @@
 package com.pitaya.smart_rest.system.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,6 +26,7 @@ import lombok.EqualsAndHashCode;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @TableId(value="id" , type = IdType.AUTO)
     private Integer id;
     /**
      * 用户名	
@@ -34,7 +41,7 @@ public class User implements Serializable {
     /**
      * 绑定消费者ID
      */
-    private Long memberId;
+    private Integer memberId;
 
     /**
      * 真实姓名
@@ -54,22 +61,25 @@ public class User implements Serializable {
     /**
      * 家庭住址
      */
-    private String homeAdress;
+    private String homeAddress;
 
     /**
      * 创建日期
      */
-    private LocalDateTime createDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createDate;
 
     /**
      * 更新信息日期
      */
-    private LocalDateTime updateDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date updateDate;
 
     /**
      * 最后一次登录时间
      */
-    private LocalDateTime loginDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date loginDate;
 
     /**
      * 状态信息0=停用 1=正常
@@ -81,5 +91,8 @@ public class User implements Serializable {
      */
     private String descriptions;
 
+    private Integer isValid;
 
+    @TableField(exist = false)
+    private String roleIds; // 用户对应的角色ID
 }

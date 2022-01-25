@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.system.mapper.PermissionMapper">
+    <!-- 查询角色拥有的所有的资源ID的集合 -->
+    <select id="queryRoleHasModuleIdsByRoleId" parameterType="int" resultType="java.lang.Integer">
+        select
+            module_id
+        from
+            t_permission
+        where
+            role_id = #{roleId}
+    </select>
+
+    <!-- 通过用户ID查询对应的资源列表（资源权限码） -->
+    <select id="queryUserHasRoleHasPermissionByUserId" parameterType="int" resultType="java.lang.String">
+        SELECT DISTINCT
+            acl_value
+        FROM
+            t_user_role ur
+                LEFT JOIN t_permission p ON ur.role_id = p.role_id
+        WHERE
+            ur.user_id = #{userId}
+    </select>
+
+</mapper>

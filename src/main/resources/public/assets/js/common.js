@@ -11,14 +11,17 @@ layui.config({
     fileChoose: 'fileChoose/fileChoose',
     treeSelect: 'treeSelect/treeSelect',
     step: 'step-lay/step',
-    treeTable: 'treeTable/treeTable',
+    treetable: 'treetable-lay/treetable', //table树形扩展
+    treeTable:'treeTable/treeTable',
     tagsInput: 'tagsInput/tagsInput',
     Split: 'Split/Split',
     Cropper: 'Cropper/Cropper',
     citypicker: 'city-picker/city-picker',
     zTree: 'zTree/zTree',
     introJs: 'introJs/introJs',
-    jquery_cookie:'jquery-cookie/jquery.cookie'
+    jquery_cookie:'jquery-cookie/jquery.cookie',
+    formSelects:"formSelects/formSelects-v4",
+    xmSelect:"xm-select/xm-select"
 }).use(['layer', 'admin'], function () {
     var $ = layui.jquery;
     var layer = layui.layer;

@@ -28,11 +28,11 @@
             <li class="layui-nav-item" lay-unselect>
                 <a>
                     <img src="assets/images/head.png" class="layui-nav-img">
-                    <cite>管理员</cite>
+                    <cite>${user.userName!""}</cite>
                 </a>
                 <dl class="layui-nav-child">
                     <dd lay-unselect><a ew-href="page/template/user-info.html">个人中心</a></dd>
-                    <dd lay-unselect><a ew-event="psw">修改密码</a></dd>
+                    <dd lay-unselect><a ew-href="${ctx}/system/user/toPasswordPage">修改密码</a></dd>
                     <hr>
                     <dd lay-unselect><a class="login-out">退出</a></dd>
                 </dl>
@@ -43,144 +43,179 @@
     <!-- 侧边栏 -->
     <div class="layui-side">
         <div class="layui-side-scroll">
+            <#-- 判断当前登录用户是否拥有权限 -->
+            <#if permissions??>
             <ul class="layui-nav layui-nav-tree arrow2" lay-filter="admin-side-nav" lay-shrink="all">
-                <li class="layui-nav-item">
-                    <a><i class="layui-icon layui-icon-home"></i>&emsp;<cite>Dashboard</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a lay-href="page/console/console.html">控制台</a></dd>
-                        <dd><a lay-href="page/console/workplace.html">工作台</a></dd>
-                        <dd><a lay-href="page/console/dashboard.html">分析页</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a><i class="layui-icon layui-icon-set"></i>&emsp;<cite>系统管理</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a lay-href="page/system/user.html">用户管理</a></dd>
-                        <dd><a lay-href="page/system/role.html">角色管理</a></dd>
-                        <dd><a lay-href="page/system/authorities.html">权限管理</a></dd>
-                        <dd><a lay-href="page/system/loginRecord.html">登录日志</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a><i class="layui-icon layui-icon-template"></i>&emsp;<cite>模板页面</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd>
-                            <a>表单页</a>
-                            <dl class="layui-nav-child">
-                                <dd><a lay-href="page/template/form/form-basic.html">基础表单</a></dd>
-                                <dd><a lay-href="page/template/form/form-advance.html">复杂表单</a></dd>
-                                <dd><a lay-href="page/template/form/form-step.html">分步表单</a></dd>
-                            </dl>
-                        </dd>
-                        <dd>
-                            <a>表格页</a>
-                            <dl class="layui-nav-child">
-                                <dd><a lay-href="page/template/table/table-basic.html">数据表格</a></dd>
-                                <dd><a lay-href="page/template/table/table-advance.html">复杂查询</a></dd>
-                                <dd><a lay-href="page/template/table/table-img.html">表格缩略图</a></dd>
-                            </dl>
-                        </dd>
-                        <dd>
-                            <a>错误页</a>
-                            <dl class="layui-nav-child">
-                                <dd><a lay-href="page/template/error/error-500.html">500</a></dd>
-                                <dd><a lay-href="page/template/error/error-404.html">404</a></dd>
-                                <dd><a lay-href="page/template/error/error-403.html">403</a></dd>
-                            </dl>
-                        </dd>
-                        <dd><a lay-href="page/template/user-info.html">个人中心</a></dd>
-                        <dd><a href="page/template/login.html" target="_blank">登录页面</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>扩展组件</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd>
-                            <a>常用组件</a>
-                            <dl class="layui-nav-child">
-                                <dd><a lay-href="page/plugin/basic/dialog.html">弹窗扩展</a></dd>
-                                <dd><a lay-href="page/plugin/basic/dropdown.html">下拉菜单</a></dd>
-                                <dd><a lay-href="page/plugin/basic/notice.html">消息通知</a></dd>
-                                <dd><a lay-href="page/plugin/basic/tagsInput.html">标签输入</a></dd>
-                                <dd><a lay-href="page/plugin/basic/cascader.html">级联选择器</a></dd>
-                            </dl>
-                        </dd>
-                        <dd>
-                            <a>进阶组件</a>
-                            <dl class="layui-nav-child">
-                                <dd><a lay-href="page/plugin/advance/printer.html">打印插件</a></dd>
-                                <dd><a lay-href="page/plugin/advance/split.html">分割面板</a></dd>
-                                <dd><a lay-href="page/plugin/advance/formX.html">表单扩展</a></dd>
-                                <dd><a lay-href="page/plugin/advance/tableX.html">表格扩展</a></dd>
-                                <dd><a lay-href="page/plugin/advance/dataGrid.html">数据列表</a></dd>
-                                <dd><a lay-href="page/plugin/advance/contextMenu.html">鼠标右键菜单</a></dd>
-                            </dl>
-                        </dd>
-                        <dd>
-                            <a>开源组件</a>
-                            <dl class="layui-nav-child">
-                                <dd><a lay-href="page/plugin/other/circleProgress.html">圆形进度条</a></dd>
-                                <dd><a lay-href="page/plugin/other/editor.html">富文本编辑器</a></dd>
-                                <dd><a lay-href="page/plugin/other/mousewheel.html">鼠标滚轮监听</a></dd>
-                                <dd><a lay-href="page/plugin/other/other.html">其他开源组件</a></dd>
-                            </dl>
-                        </dd>
-                        <dd><a lay-href="page/plugin/more.html">更多扩展</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a><i class="layui-icon layui-icon-app"></i>&emsp;<cite>经典实例</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a lay-href="page/example/dialog.html">弹窗实例</a></dd>
-                        <dd><a lay-href="page/example/syxm.html">课程管理</a></dd>
-                        <dd><a lay-href="page/example/fullcalendar1.html">排课管理</a></dd>
-                        <dd><a lay-href="page/example/form.html">添加试题</a></dd>
-                        <dd><a lay-href="page/example/file.html">文件管理</a></dd>
-                        <dd><a lay-href="page/example/table-crud.html">表格CRUD</a></dd>
-                        <dd><a href="page/example/side-more.html" target="_blank">多系统模式</a></dd>
-                        <dd><a href="page/example/side-ajax.html" target="_blank">Ajax侧边栏</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a><i class="layui-icon layui-icon-release"></i>&emsp;<cite>LayUI组件</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a lay-href="https://www.layui.com/demo/button.html">组件演示</a></dd>
-                        <dd><a lay-href="https://www.layui.com/doc/element/button.html#use">layui文档</a></dd>
-                        <dd><a lay-href="https://layer.layui.com/">layer弹窗组件</a></dd>
-                        <dd><a lay-href="https://www.layui.com/laydate/">laydate日期组件</a></dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a><i class="layui-icon layui-icon-unlink"></i>&emsp;<cite>多级菜单</cite></a>
-                    <dl class="layui-nav-child">
-                        <dd><a>二级菜单</a></dd>
-                        <dd>
-                            <a>二级菜单</a>
-                            <dl class="layui-nav-child">
-                                <dd><a>三级菜单</a></dd>
-                                <dd>
-                                    <a>三级菜单</a>
-                                    <dl class="layui-nav-child">
-                                        <dd><a>四级菜单</a></dd>
-                                        <dd>
-                                            <a>四级菜单</a>
-                                            <dl class="layui-nav-child">
-                                                <dd><a>五级菜单</a></dd>
-                                                <dd>
-                                                    <a lay-href="https://baidu.com">百度一下</a>
-                                                </dd>
-                                            </dl>
-                                        </dd>
-                                    </dl>
-                                </dd>
-                            </dl>
-                        </dd>
-                    </dl>
-                </li>
-                <li class="layui-nav-item">
-                    <a lay-href="//baidu.com"><i class="layui-icon layui-icon-unlink"></i>&emsp;<cite>一级菜单</cite></a>
-                </li>
+                <#-- 通过freemarker中的seq_contains内建指令判断菜单是否显示 -->
+                <#if permissions?seq_contains("10") >
+                    <li class="layui-nav-item">
+                        <a><i class="layui-icon layui-icon-set"></i>&emsp;<cite>系统管理</cite></a>
+                        <dl class="layui-nav-child">
+                            <#if permissions?seq_contains("1010")>
+                                <dd><a lay-href="${ctx}/system/org/index">机构管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("1020")>
+                                <dd><a lay-href="${ctx}/system/user/index">用户管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("1030")>
+                                <dd><a lay-href="${ctx}/system/role/index">角色管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("1040")>
+                                <dd><a lay-href="${ctx}/system/module/index">权限管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("1050")>
+                                <dd><a lay-href="${ctx}/system/terminal/index">终端管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("1060")>
+                                <dd><a lay-href="${ctx}/system/tray/index">托盘管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("1070")>
+                                <dd><a lay-href="${ctx}/system/setting/index">系统设置</a></dd>
+                            </#if>
+
+                        </dl>
+                    </li>
+                </#if>
+
+                <#if permissions?seq_contains("20") >
+                    <li class="layui-nav-item">
+                        <a><i class="layui-icon layui-icon-template"></i>&emsp;<cite>店铺管理</cite></a>
+                        <dl class="layui-nav-child">
+                            <#if permissions?seq_contains("2010") >
+                            <dd><a lay-href="${ctx}/system/staff/index.html">员工管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("2020") >
+                            <dd><a lay-href="${ctx}/system/card/index.html">管理卡管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("2030") >
+                            <dd><a lay-href="${ctx}/system/foodSetting/index.html">终端菜品设置</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("2040") >
+                            <dd>
+                                <a>档口管理</a>
+                                <dl class="layui-nav-child">
+                                    <#if permissions?seq_contains("204010") >
+                                    <dd><a lay-href="${ctx}/system/food/index.html">菜品管理</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("204020") >
+                                    <dd><a lay-href="${ctx}/system/foodClassify/index.html">菜品分类管理</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("204030") >
+                                    <dd><a lay-href="${ctx}/system/menuMove/index.html">餐厅菜单迁移</a></dd>
+                                    </#if>
+                                </dl>
+                            </dd>
+                            </#if>
+
+                        </dl>
+                    </li>
+                </#if>
+                <#if permissions?seq_contains("30") >
+                    <li class="layui-nav-item">
+                        <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>运营管理</cite></a>
+                        <dl class="layui-nav-child">
+                            <#if permissions?seq_contains("3010") >
+                            <dd><a lay-href="${ctx}/system/charge1/index.html">充值优惠</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("3020") >
+                            <dd><a lay-href="${ctx}/system/consumption1/index.html">消费设置</a></dd>
+                            </#if>
+                        </dl>
+                    </li>
+                </#if>
+                <#if permissions?seq_contains("40") >
+                    <li class="layui-nav-item">
+                        <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>订单管理</cite></a>
+                        <dl class="layui-nav-child">
+                            <#if permissions?seq_contains("4010") >
+                            <dd><a lay-href="${ctx}/system/charge2/index.html">订单管理</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("4020") >
+                            <dd><a lay-href="${ctx}/system/consumption/index.html">退款单管理</a></dd>
+                            </#if>
+                        </dl>
+                    </li>
+                </#if>
+                <#if permissions?seq_contains("50") >
+                    <li class="layui-nav-item">
+                        <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>统计管理</cite></a>
+                        <dl class="layui-nav-child">
+                            <#if permissions?seq_contains("5010") >
+                            <dd><a lay-href="${ctx}/system/charge3/index.html">餐别统计</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("5020") >
+                            <dd><a lay-href="${ctx}/system/consumption1/index.html">充值统计</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("5030") >
+                            <dd><a lay-href="${ctx}/system/consumption2/index.html">会员统计</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("5040") >
+                            <dd><a lay-href="${ctx}/system/consumption3/index.html">商品统计</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("5060") >
+                            <dd><a lay-href="${ctx}/system/consumption4/index.html">营收统计</a></dd>
+                            </#if>
+                        </dl>
+                    </li>
+                </#if>
+                <#if permissions?seq_contains("60") >
+                    <li class="layui-nav-item">
+                        <a><i class="layui-icon layui-icon-app"></i>&emsp;<cite>顾客管理</cite></a>
+                        <dl class="layui-nav-child">
+                            <#if permissions?seq_contains("6010") >
+                            <dd>
+                                <a>线下会员</a>
+                                <dl class="layui-nav-child">
+                                    <#if permissions?seq_contains("601010") >
+                                    <dd><a lay-href="${ctx}/system/charge4/index.html">资金管理</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("601020") >
+                                    <dd><a lay-href="${ctx}/system/consumption11/index.html">余额变动</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("601030") >
+                                    <dd><a lay-href="${ctx}/system/consumption21/index.html">会员管理</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("601040") >
+                                    <dd><a lay-href="${ctx}/system/consumption31/index.html">会员评论</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("601050") >
+                                    <dd><a lay-href="${ctx}/system/consumption41/index.html">会员卡挂失</a></dd>
+                                    </#if>
+                                </dl>
+                            </dd>
+                            </#if>
+                            <#if permissions?seq_contains("6020") >
+                            <dd>
+                                <a>线上会员</a>
+                                <dl class="layui-nav-child">
+                                    <#if permissions?seq_contains("602010") >
+                                    <dd><a lay-href="${ctx}/system/charge5/index.html">会员管理</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("602020") >
+                                    <dd><a lay-href="${ctx}/system/consumption1/index.html">会员评论</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("602030") >
+                                    <dd><a lay-href="${ctx}/system/consumption2/index.html">会员提现</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("602040") >
+                                    <dd><a lay-href="${ctx}/system/consumption3/index.html">实时余额</a></dd>
+                                    </#if>
+                                    <#if permissions?seq_contains("602050") >
+                                    <dd><a lay-href="${ctx}/system/consumption4/index.html">资金管理</a></dd>
+                                    </#if>
+                                </dl>
+                            </dd>
+                            </#if>
+                        </dl>
+                    </li>
+                </#if>
+
+
+
+
+
             </ul>
+            </#if>
         </div>
     </div>
 
@@ -209,7 +244,7 @@
 
         // 默认加载主页
         index.loadHome({
-            menuPath: 'page/console/console.html',
+            menuPath: '${ctx}/welcome',
             menuName: '<i class="layui-icon layui-icon-home"></i>'
         });
 
@@ -224,12 +259,12 @@
                 layer.close(index);
 
                 // 清空cookie信息
-                $.removeCookie("userIdStr", {domain: "localhost", path: "/crm"});
-                $.removeCookie("userName", {domain: "localhost", path: "/crm"});
-                $.removeCookie("trueName", {domain: "localhost", path: "/crm"});
+                $.removeCookie("userIdStr", {domain: "localhost", path: "/smart_rest"});
+                $.removeCookie("userName", {domain: "localhost", path: "/smart_rest"});
+                $.removeCookie("trueName", {domain: "localhost", path: "/smart_rest"});
 
                 // 跳转到登录页面（父窗口跳转）
-                window.parent.location.href = ctx + "/index";
+                window.parent.location.href = ctx + "/login";
             });
         });
 
