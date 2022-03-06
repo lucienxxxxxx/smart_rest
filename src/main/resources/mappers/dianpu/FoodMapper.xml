@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.dianpu.mapper.FoodMapper">
+    <select id="selectModelPage" resultType="com.pitaya.smart_rest.dianpu.model.FoodModel"
+            parameterType="com.pitaya.smart_rest.dianpu.query.FoodQuery">
+        select f.id,
+        f.name,
+        f.dangkou_id,
+        f.price,
+        f.price_method,
+        f.tag_id,
+        f.rest_id,
+        f.heat,
+        f.protein,
+        f.fat,
+        f.cellulose,
+        f.carbohydrate,
+        f.descriptions,
+        f.discount,
+        ft.tag_name
+        from t_food f
+        left join t_food_tag ft on f.tag_id = ft.id
+        <where>
+            f.rest_id = #{foodQuery.restId}
+            <if test="foodQuery.name != null and foodQuery.name != '' ">
+                AND f.name LIKE CONCAT('%',#{foodQuery.name},'%')
+            </if>
+            <if test="foodQuery.dangkouId != null">
+                AND f.dangkou_id LIKE CONCAT('%',#{foodQuery.dangkouId},'%')
+            </if>
+            <if test="foodQuery.tagId != null">
+                AND f.tag_id LIKE CONCAT('%',#{foodQuery.tagId},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

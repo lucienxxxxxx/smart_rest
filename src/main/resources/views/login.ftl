@@ -48,7 +48,7 @@
     </div>
 
     <div class="login-footer">
-        <p>© 2022 smartrest.com 版权所有</p>
+        <p><a href="https://beian.miit.gov.cn/">粤ICP备2022016020号 ©2022 lvlv5g.cn 版权所有</a></p>
 
     </div>
 </div>
@@ -60,6 +60,7 @@
         var layer = layui.layer;
         var form = layui.form;
         var $ = layui.jquery_cookie($);
+
         // 表单提交
         form.on('submit(login-submit)', function (obj) {
             console.log(obj.field);

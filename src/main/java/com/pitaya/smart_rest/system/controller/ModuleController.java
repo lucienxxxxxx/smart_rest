@@ -4,6 +4,7 @@ package com.pitaya.smart_rest.system.controller;
 import com.pitaya.smart_rest.base.ResultInfo;
 import com.pitaya.smart_rest.system.model.TreeModel;
 import com.pitaya.smart_rest.system.service.impl.ModuleServiceImpl;
+import com.pitaya.smart_rest.system.service.impl.PermissionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +34,15 @@ public class ModuleController extends BaseController {
 
     @Autowired
     private ModuleServiceImpl moduleService;
+
+    @Autowired
+    private PermissionServiceImpl permissionService;
+
+    @RequestMapping("queryModules")
+    @ResponseBody
+    public ResultInfo queryModules(Integer userId){
+        return success("成功",permissionService.queryModelPermissions(userId));
+    }
 
     /**
      * 模块权限主页

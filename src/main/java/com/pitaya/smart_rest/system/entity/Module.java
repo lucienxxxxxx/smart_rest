@@ -80,10 +80,6 @@ public class Module implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateDate;
 
-    /**
-     * 店铺id
-     */
-    private Integer resId;
 
     /**
      * 描述

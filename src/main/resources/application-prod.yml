@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 9099
 
 ## 数据源配置
 spring:
@@ -16,7 +16,7 @@ spring:
     charset: UTF-8
     template-loader-path: classpath:/views/
     request-context-attribute: req
-
+    config: setTimeFormat("HH:mm:ss")
   ## 启用热部署
   devtools:
     restart:
@@ -25,3 +25,8 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath*:/mappers/*/*Mapper.xml
+  global-config:
+    db-config:
+      logic-delete-field: is_valid # 全局逻辑删除的实体字段名(since 3.3.0,配置后可以忽略不配置步骤2)
+      logic-delete-value: 0 # 逻辑已删除值
+      logic-not-delete-value: 1 # 逻辑未删除值

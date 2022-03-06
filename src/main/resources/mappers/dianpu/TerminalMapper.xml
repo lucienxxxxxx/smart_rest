@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.dianpu.mapper.TerminalMapper">
+
+    <select id="selectModelPage" parameterType="com.pitaya.smart_rest.dianpu.query.TerminalQuery"
+            resultType="com.pitaya.smart_rest.dianpu.model.TerminalModel">
+        select t.id, t.terminal_name, t.setting_date, t.type, t.state, t.descriptions, f.name as food_name
+        from t_terminal t
+                 left join t_food f on t.food_id = f.id
+        <where>
+            t.restaurant_id = #{terminalQuery.restaurantId}
+            <if test="terminalQuery.terminalName != null and terminalQuery.terminalName!=''">
+                AND t.terminal_name LIKE CONCAT('%',#{terminalQuery.terminalName},'%')
+            </if>
+            <if test="terminalQuery.type != null">
+                AND t.type LIKE CONCAT('%',#{terminalQuery.type},'%')
+            </if>
+            <if test="terminalQuery.state != null">
+                AND t.state LIKE CONCAT('%',#{terminalQuery.state},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -9,6 +9,7 @@
     <#include "common.ftl">
 </head>
 <body class="layui-layout-body">
+<#--<body class="theme-white" data-theme="theme-white">-->
 <div class="layui-layout layui-layout-admin">
     <!-- 头部 -->
     <div class="layui-header">
@@ -37,6 +38,9 @@
                     <dd lay-unselect><a class="login-out">退出</a></dd>
                 </dl>
             </li>
+<#--            <li class="layui-nav-item" lay-unselect>-->
+<#--                <a ew-event="theme" title="主题"><i class="layui-icon layui-icon-more-vertical"></i></a>-->
+<#--            </li>-->
         </ul>
     </div>
 
@@ -64,55 +68,52 @@
                                 <dd><a lay-href="${ctx}/system/module/index">权限管理</a></dd>
                             </#if>
                             <#if permissions?seq_contains("1050")>
-                                <dd><a lay-href="${ctx}/system/terminal/index">终端管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("1060")>
-                                <dd><a lay-href="${ctx}/system/tray/index">托盘管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("1070")>
                                 <dd><a lay-href="${ctx}/system/setting/index">系统设置</a></dd>
                             </#if>
-
                         </dl>
                     </li>
                 </#if>
-
                 <#if permissions?seq_contains("20") >
                     <li class="layui-nav-item">
                         <a><i class="layui-icon layui-icon-template"></i>&emsp;<cite>店铺管理</cite></a>
                         <dl class="layui-nav-child">
-                            <#if permissions?seq_contains("2010") >
-                            <dd><a lay-href="${ctx}/system/staff/index.html">员工管理</a></dd>
+                            <#if permissions?seq_contains("2010")>
+                                <dd><a lay-href="${ctx}/dianpu/terminal/index">终端管理</a></dd>
                             </#if>
-                            <#if permissions?seq_contains("2020") >
-                            <dd><a lay-href="${ctx}/system/card/index.html">管理卡管理</a></dd>
+                            <#if permissions?seq_contains("2020")>
+                                <dd><a lay-href="${ctx}/dianpu/tuopan/index">托盘管理</a></dd>
                             </#if>
                             <#if permissions?seq_contains("2030") >
-                            <dd><a lay-href="${ctx}/system/foodSetting/index.html">终端菜品设置</a></dd>
+                            <dd><a lay-href="${ctx}/dianpu/staff/index">员工管理</a></dd>
                             </#if>
                             <#if permissions?seq_contains("2040") >
-                            <dd>
-                                <a>档口管理</a>
-                                <dl class="layui-nav-child">
-                                    <#if permissions?seq_contains("204010") >
-                                    <dd><a lay-href="${ctx}/system/food/index.html">菜品管理</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("204020") >
-                                    <dd><a lay-href="${ctx}/system/foodClassify/index.html">菜品分类管理</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("204030") >
-                                    <dd><a lay-href="${ctx}/system/menuMove/index.html">餐厅菜单迁移</a></dd>
-                                    </#if>
-                                </dl>
-                            </dd>
+                            <dd><a lay-href="${ctx}/dianpu/rfid-user/index">管理卡管理</a></dd>
                             </#if>
-
+                            <#if permissions?seq_contains("2050") >
+                            <dd><a lay-href="${ctx}/system/restaurant/index">店铺参数设置</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("2060") >
+                                <dd><a lay-href="${ctx}/system/foodSetting1/index.html">店铺设置</a></dd>
+                            </#if>
+                            <#if permissions?seq_contains("2070") >
+                                <dd>
+                                    <a>档口管理</a>
+                                    <dl class="layui-nav-child">
+                                        <#if permissions?seq_contains("207010") >
+                                            <dd><a lay-href="${ctx}/dianpu/food/index">菜品管理</a></dd>
+                                        </#if>
+                                        <#if permissions?seq_contains("207020") >
+                                            <dd><a lay-href="${ctx}/dianpu/foodTag/index">菜品标签管理</a></dd>
+                                        </#if>
+                                    </dl>
+                                </dd>
+                            </#if>
                         </dl>
                     </li>
                 </#if>
                 <#if permissions?seq_contains("30") >
                     <li class="layui-nav-item">
-                        <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>运营管理</cite></a>
+                        <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>充值活动</cite></a>
                         <dl class="layui-nav-child">
                             <#if permissions?seq_contains("3010") >
                             <dd><a lay-href="${ctx}/system/charge1/index.html">充值优惠</a></dd>
@@ -128,7 +129,7 @@
                         <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>订单管理</cite></a>
                         <dl class="layui-nav-child">
                             <#if permissions?seq_contains("4010") >
-                            <dd><a lay-href="${ctx}/system/charge2/index.html">订单管理</a></dd>
+                            <dd><a lay-href="${ctx}/dingdan/order/index">订单管理</a></dd>
                             </#if>
                             <#if permissions?seq_contains("4020") >
                             <dd><a lay-href="${ctx}/system/consumption/index.html">退款单管理</a></dd>
@@ -173,7 +174,7 @@
                                     <dd><a lay-href="${ctx}/system/consumption11/index.html">余额变动</a></dd>
                                     </#if>
                                     <#if permissions?seq_contains("601030") >
-                                    <dd><a lay-href="${ctx}/system/consumption21/index.html">会员管理</a></dd>
+                                    <dd><a lay-href="${ctx}/guke/offlineMember/index">会员管理</a></dd>
                                     </#if>
                                     <#if permissions?seq_contains("601040") >
                                     <dd><a lay-href="${ctx}/system/consumption31/index.html">会员评论</a></dd>
@@ -189,13 +190,13 @@
                                 <a>线上会员</a>
                                 <dl class="layui-nav-child">
                                     <#if permissions?seq_contains("602010") >
-                                    <dd><a lay-href="${ctx}/system/charge5/index.html">会员管理</a></dd>
+                                    <dd><a lay-href="${ctx}/guke/onlineMember/index">会员管理</a></dd>
                                     </#if>
                                     <#if permissions?seq_contains("602020") >
                                     <dd><a lay-href="${ctx}/system/consumption1/index.html">会员评论</a></dd>
                                     </#if>
                                     <#if permissions?seq_contains("602030") >
-                                    <dd><a lay-href="${ctx}/system/consumption2/index.html">会员提现</a></dd>
+                                    <dd><a lay-href="${ctx}/system/consumption21/index.html">会员提现</a></dd>
                                     </#if>
                                     <#if permissions?seq_contains("602040") >
                                     <dd><a lay-href="${ctx}/system/consumption3/index.html">实时余额</a></dd>
@@ -209,11 +210,6 @@
                         </dl>
                     </li>
                 </#if>
-
-
-
-
-
             </ul>
             </#if>
         </div>
@@ -223,7 +219,7 @@
     <div class="layui-body"></div>
     <!-- 底部 -->
     <div class="layui-footer layui-text">
-        copyright © 2022 <a href="http://smartrest.com" target="_blank">smartrest.com</a> all rights reserved.
+        <a href="https://beian.miit.gov.cn/">粤ICP备2022016020号 ©2022 lvlv5g.cn 版权所有</a>
         <span class="pull-right">Version 0.0.1</span>
     </div>
 </div>
@@ -237,11 +233,11 @@
 
 
 <script>
-    layui.use(['index', 'jquery_cookie'], function () {
+    layui.use(['index', 'jquery_cookie','admin'], function () {
         var $ = layui.jquery;
         var $ = layui.jquery_cookie($);
         var index = layui.index;
-
+        var Index =index
         // 默认加载主页
         index.loadHome({
             menuPath: '${ctx}/welcome',
@@ -263,6 +259,7 @@
                 $.removeCookie("userName", {domain: "localhost", path: "/smart_rest"});
                 $.removeCookie("trueName", {domain: "localhost", path: "/smart_rest"});
 
+                Index.clearTabCache();
                 // 跳转到登录页面（父窗口跳转）
                 window.parent.location.href = ctx + "/login";
             });

@@ -98,6 +98,7 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, Module> impleme
         QueryWrapper<Module> moduleQueryWrapper = new QueryWrapper<Module>();
         moduleQueryWrapper.eq("grade",grade);
         moduleQueryWrapper.eq("module_name",module.getModuleName());
+        moduleQueryWrapper.eq("is_valid",1);
         temp = moduleMapper.selectOne(moduleQueryWrapper);
         if (temp != null) {
             AssertUtil.isTrue(!(temp.getId()).equals(module.getId()), "该层级下菜单名已存在！");
@@ -110,6 +111,7 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, Module> impleme
             QueryWrapper<Module> moduleQueryWrapper1 = new QueryWrapper<Module>();
             moduleQueryWrapper1.eq("grade",grade);
             moduleQueryWrapper1.eq("url",module.getUrl());
+            moduleQueryWrapper1.eq("is_valid",1);
             temp = moduleMapper.selectOne(moduleQueryWrapper1);
             // 判断是否存在
             if (temp != null) {
@@ -122,6 +124,7 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, Module> impleme
         // 通过权限码查询资源对象
         QueryWrapper<Module> moduleQueryWrapper2 = new QueryWrapper<Module>();
         moduleQueryWrapper2.eq("opt_value",module.getOptValue());
+        moduleQueryWrapper2.eq("is_valid",1);
         temp = moduleMapper.selectOne(moduleQueryWrapper2);
         // 判断是否为空
         if (temp != null) {
@@ -154,16 +157,16 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, Module> impleme
         QueryWrapper<Module> moduleQueryWrapper = new QueryWrapper<Module>();
         moduleQueryWrapper.eq("grade",grade);
         moduleQueryWrapper.eq("module_name",module.getModuleName());
+        moduleQueryWrapper.eq("is_valid",1);
         AssertUtil.isTrue(null != moduleMapper.selectOne(moduleQueryWrapper), "该层级下模块名称已存在！");
 
         // 如果是二级菜单 （grade=1)
         if (grade == 1) {
-            // 地址 url   二级菜单（grade=1），非空
-            AssertUtil.isTrue(StringUtils.isBlank(module.getUrl()),"URL不能为空！");
             // 地址 url   二级菜单（grade=1），且同一层级下不可重复
             QueryWrapper<Module> moduleQueryWrapper1 = new QueryWrapper<Module>();
             moduleQueryWrapper1.eq("grade",grade);
             moduleQueryWrapper1.eq("url",module.getUrl());
+            moduleQueryWrapper1.eq("is_valid",1);
             AssertUtil.isTrue(null != moduleMapper.selectOne(moduleQueryWrapper1),"URL不可重复！");
         }
 
@@ -184,6 +187,7 @@ public class ModuleServiceImpl extends ServiceImpl<ModuleMapper, Module> impleme
         // 权限码 optValue     不可重复
         QueryWrapper<Module> moduleQueryWrapper2 = new QueryWrapper<Module>();
         moduleQueryWrapper2.eq("opt_value",module.getOptValue());
+        moduleQueryWrapper2.eq("is_valid",1);
         AssertUtil.isTrue(null != moduleMapper.selectOne(moduleQueryWrapper2),"权限码已存在！");
 
 

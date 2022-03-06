@@ -53,13 +53,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         //逻辑删除
         queryWrapper.eq("is_valid",1);
 
-        if (userQuery.getUserName() != null) {
+        if (userQuery.getUserName() != null && !StringUtils.isBlank(userQuery.getUserName())) {
             queryWrapper.like("user_name", userQuery.getUserName());
         }
-        if (userQuery.getEmail() != null) {
+        if (userQuery.getEmail() != null&& !StringUtils.isBlank(userQuery.getEmail())) {
             queryWrapper.like("email", userQuery.getEmail());
         }
-        if (userQuery.getPhone() != null) {
+        if (userQuery.getPhone() != null&& !StringUtils.isBlank(userQuery.getPhone())) {
             queryWrapper.like("phone", userQuery.getPhone());
         }
         //分页
@@ -82,6 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @param flag
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void addOrUpdate(User user, Integer flag) {
 
         if (flag == 0) {   //添加用户
@@ -98,8 +99,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             //添加
             AssertUtil.isTrue(userMapper.insert(user) != 1, "用户添加失败");
 
-            //用户角色关联待完善
-
         } else if (flag == 1) {   //编辑用户
             //参数校验
             checkUserParams(user.getUserName(), user.getEmail(), user.getTrueName(), user.getPhone(), user.getId());
@@ -109,8 +108,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
             //修改
             AssertUtil.isTrue(userMapper.updateById(user) != 1, "用户修改失败");
-
-            //用户角色关联待完善
 
         }
 
@@ -176,6 +173,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @param userId
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void del(Integer userId) {
         User user = userMapper.selectById(userId);
         AssertUtil.isTrue(userId==null||user==null,"该用户不存在");
@@ -192,6 +190,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @param userId
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void resetPwd(Integer userId) {
 
         User user = userMapper.selectById(userId);

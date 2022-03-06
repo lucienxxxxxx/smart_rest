@@ -45,7 +45,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         //逻辑删除
         queryWrapper.eq("is_valid", 1);
 
-        if (roleQuery.getRoleName() != null) {
+        if (roleQuery.getRoleName() != null && !StringUtils.isBlank(roleQuery.getRoleName())) {
             queryWrapper.like("role_name", roleQuery.getRoleName());
         }
 
@@ -62,6 +62,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void addOrUpdate(Role role, Integer flag) {
         if (flag == 0) {
             //参数校验
@@ -93,6 +94,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void del(Integer roleId) {
         Role role = roleMapper.selectById(roleId);
         AssertUtil.isTrue(roleId == null || role == null, "该角色不存在");
@@ -112,7 +114,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public void addGrant(Integer roleId, Integer[] mIds) {
         // 1. 通过角色ID查询对应的权限记录
         QueryWrapper<Permission> permissionQueryWrapper = new QueryWrapper<>();
-        permissionQueryWrapper.eq("role_id",roleId);
+        permissionQueryWrapper.eq("role_id", roleId);
         Integer count = permissionMapper.selectCount(permissionQueryWrapper);
         // 2. 如果权限记录存在，则删除对应的角色拥有的权限记录
         if (count > 0) {
@@ -120,11 +122,11 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
             permissionMapper.delete(permissionQueryWrapper);
         }
         // 3. 如果有权限记录，则添加权限记录
-        if (mIds != null &&  mIds.length > 0) {
+        if (mIds != null && mIds.length > 0) {
 
 
             // 遍历资源ID数组
-            for(Integer mId: mIds) {
+            for (Integer mId : mIds) {
                 Permission permission = new Permission();
                 permission.setModuleId(mId);
                 permission.setRoleId(roleId);

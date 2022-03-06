@@ -46,15 +46,23 @@
         </div>
     </div>
 
-    <#if module.grade?? && module.grade==1>
-        <div class="layui-form-item layui-row layui-col-xs12">
-            <label class="layui-form-label">菜单url</label>
-            <div class="layui-input-block">
-                <input type="text" class="layui-input userName"
-                       lay-verify="required" name="url" id="url" placeholder="请输入菜单url" value="${(module.url)!""}">
-            </div>
+    <div class="layui-form-item layui-row layui-col-xs12">
+        <label class="layui-form-label">菜单url</label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input userName"
+                   lay-verify="required" name="url" id="url" placeholder="请输入菜单url" value="${(module.url)!""}">
         </div>
-    </#if>
+    </div>
+
+<#--    <#if module.grade?? && module.grade==1 && module.grade==2>-->
+<#--        <div class="layui-form-item layui-row layui-col-xs12">-->
+<#--            <label class="layui-form-label">菜单url</label>-->
+<#--            <div class="layui-input-block">-->
+<#--                <input type="text" class="layui-input userName"-->
+<#--                       lay-verify="required" name="url" id="url" placeholder="请输入菜单url" value="${(module.url)!""}">-->
+<#--            </div>-->
+<#--        </div>-->
+<#--    </#if>-->
 
 
     <!--

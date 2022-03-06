@@ -167,8 +167,6 @@
 
         // 显示表单弹窗
         function showEditModel(mUser) {
-
-
             admin.open({
                 type: 1,
                 title: (mUser ? '修改' : '添加') + '用户',
@@ -214,12 +212,8 @@
                     }
 
 
-                    // // 回显选中角色
-                    // if (mUser && mUser.roles) {
-                    //     insRoleSel.setValue(mData.roles.map(function (item) {
-                    //         return item.roleId;
-                    //     }));
-                    // }
+
+
                 }
             });
         }

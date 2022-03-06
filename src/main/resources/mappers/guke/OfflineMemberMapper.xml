@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.guke.mapper.OfflineMemberMapper">
+    <select id="selectMemberPage" parameterType="com.pitaya.smart_rest.guke.query.MemberQuery"
+            resultType="com.pitaya.smart_rest.guke.model.OfflineMemberModel">
+        SELECT m.id,
+        m.org_id,
+        m.mobile,
+        m.true_name,
+        m.create_date,
+        m.virtual_acc,
+        m.gift_acc,
+        m.allowance_acc,
+        m.cash_acc,
+        m.charge_acc,
+        m.state,
+        m.note,
+        ru.logic_name
+        from t_member m
+        join t_rfid_user ru on m.id = ru.member_id
+        <where>
+            m.member_type = 1
+            and ru.type_id = 1
+            and m.is_valid = 1
+            and m.res_id = #{memberQuery.resId}
+            <if test="memberQuery.id != null ">
+                AND m.id LIKE CONCAT('%',#{memberQuery.id},'%')
+            </if>
+            <if test="memberQuery.trueName != null and memberQuery.trueName!=''">
+                AND m.true_name LIKE CONCAT('%',#{memberQuery.trueName},'%')
+            </if>
+            <if test="memberQuery.logicName != null and memberQuery.logicName!=''">
+                AND ru.logic_name LIKE CONCAT('%',#{memberQuery.logicName},'%')
+            </if>
+            <if test="memberQuery.note != null and memberQuery.note!=''">
+                AND m.note LIKE CONCAT('%',#{memberQuery.note},'%')
+            </if>
+            <if test="memberQuery.mobile != null and memberQuery.mobile!='' ">
+                AND m.mobile LIKE #{memberQuery.mobile}
+            </if>
+            <if test="memberQuery.state != null">
+                AND m.state LIKE #{memberQuery.state}
+            </if>
+
+        </where>
+    </select>
+</mapper>

@@ -2,8 +2,10 @@ package com.pitaya.smart_rest.system.service;
 
 import com.pitaya.smart_rest.system.entity.Permission;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pitaya.smart_rest.system.model.ModuleTree;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -14,5 +16,7 @@ import java.util.List;
  * @since 2022-01-22
  */
 public interface IPermissionService extends IService<Permission> {
-    public List<String> queryUserHasRoleHasPermissionByUserId(Integer userId);
+    List<String> queryUserHasRoleHasPermissionByUserId(Integer userId);
+
+    List<ModuleTree> queryModelPermissions(Integer userId);
 }

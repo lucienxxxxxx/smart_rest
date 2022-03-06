@@ -117,7 +117,6 @@
             var data = obj.data;
             var layEvent = obj.event;
             if (layEvent === 'edit') { // 修改
-
                 showEditModel(data);
             } else if (layEvent === 'del') { // 删除
                 doDel(obj);

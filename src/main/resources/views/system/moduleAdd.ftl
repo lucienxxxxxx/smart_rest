@@ -46,7 +46,7 @@
         </div>
     </div>
 
-    <#if grade==1>
+    <#if grade==1&&grade==2>
         <div class="layui-form-item layui-row layui-col-xs12">
             <label class="layui-form-label">菜单url</label>
             <div class="layui-input-block">

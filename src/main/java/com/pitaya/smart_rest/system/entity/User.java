@@ -1,9 +1,7 @@
 package com.pitaya.smart_rest.system.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 import java.util.Date;
@@ -91,8 +89,13 @@ public class User implements Serializable {
      */
     private String descriptions;
 
+    /**
+     * 逻辑删除
+     */
+    @TableLogic
     private Integer isValid;
 
+    private Integer resId;
     @TableField(exist = false)
     private String roleIds; // 用户对应的角色ID
 }
