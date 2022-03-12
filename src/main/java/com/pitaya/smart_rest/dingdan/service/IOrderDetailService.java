@@ -19,4 +19,6 @@ public interface IOrderDetailService extends IService<OrderDetail> {
     Map<String, Object> queryAllOrderDetailByParams(OrderDetailQuery orderDetailQuery,String orderId);
 
     void refund(Integer id, Float refundMoney);
+
+    void allRefund(String orderId);
 }

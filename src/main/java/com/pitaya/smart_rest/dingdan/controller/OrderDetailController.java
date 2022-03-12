@@ -39,4 +39,11 @@ public class OrderDetailController extends BaseController {
         orderDetailService.refund(id,refundMoney);
         return success("退款成功");
     }
+
+    @PostMapping("allRefund")
+    @ResponseBody
+    public ResultInfo allRefund(@RequestParam String orderId){
+        orderDetailService.allRefund(orderId);
+        return success("整单退款成功");
+    }
 }

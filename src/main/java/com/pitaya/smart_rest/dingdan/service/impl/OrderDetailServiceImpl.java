@@ -1,6 +1,7 @@
 package com.pitaya.smart_rest.dingdan.service.impl;
 
 import cn.hutool.core.util.NumberUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.pitaya.smart_rest.dingdan.entity.Order;
 import com.pitaya.smart_rest.dingdan.entity.OrderDetail;
@@ -16,6 +17,7 @@ import com.pitaya.smart_rest.guke.entity.Member;
 import com.pitaya.smart_rest.guke.mapper.MemberMapper;
 import com.pitaya.smart_rest.utils.AssertUtil;
 
+import com.pitaya.smart_rest.utils.CountUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +45,12 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
     @Resource
     private MemberMapper memberMapper;
 
+    /**
+     * 多条件查询-分页
+     * @param orderDetailQuery
+     * @param orderId
+     * @return
+     */
     @Override
     public Map<String, Object> queryAllOrderDetailByParams(OrderDetailQuery orderDetailQuery,String orderId) {
         List<OrderDetailModel> list = orderDetailMapper.queryOrderDetailById(orderId);
@@ -54,6 +62,11 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
         return linkedHashMap;
     }
 
+    /**
+     * 子订单退款
+     * @param order_detail_id
+     * @param refund_money
+     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void refund(Integer order_detail_id, Float refund_money) {
@@ -63,9 +76,9 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
         //参数校验
         AssertUtil.isTrue(order_detail==null,"该子订单id不存在");
         AssertUtil.isTrue(refund_money==null,"退款金额为空");
-        BigDecimal orderMoney = NumberUtil.add(order_detail.getGiftAcc(),order_detail.getAllowanceAcc(),order_detail.getChargeAcc(),order_detail.getVirtualAcc(),order_detail.getCashAcc());
-        AssertUtil.isTrue(Float.compare(refund_money,orderMoney.floatValue())==-1,"退款金额不能大于订单总金额");
-        //退钱
+//        BigDecimal orderMoney = NumberUtil.add(order_detail.getGiftAcc(),order_detail.getAllowanceAcc(),order_detail.getChargeAcc(),order_detail.getVirtualAcc(),order_detail.getCashAcc());
+//        AssertUtil.isTrue(Float.compare(refund_money,orderMoney.floatValue())==-1,"退款金额不能大于订单总金额");
+       //退钱
         Float refund_charge_acc= Float.valueOf(0),
                 refund_cash_acc= Float.valueOf(0),
                 refund_allowance_acc= Float.valueOf(0),
@@ -177,5 +190,25 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
         order.setState(2);
         AssertUtil.isTrue(orderMapper.updateById(order)!=1,"订单状态修改失败");
 
+    }
+
+    /**
+     * 整单退款
+     * @param orderId
+     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void allRefund(String orderId) {
+        //查询该订单号是否存在
+        AssertUtil.isTrue(orderMapper.selectById(orderId)==null,"该订单号不存在");
+        //查询该订单所有的子订单
+        QueryWrapper<OrderDetail> queryWrapper = new QueryWrapper<OrderDetail>();
+        queryWrapper.eq("order_id",orderId);
+        List<OrderDetail> orderDetails = orderDetailMapper.selectList(queryWrapper);
+        //遍历调用子订单退款
+        orderDetails.forEach(od -> {
+            Float total = CountUtil.floatAdd(new Float[]{od.getCashAcc(),od.getChargeAcc(),od.getVirtualAcc(),od.getAllowanceAcc(),od.getGiftAcc()});
+            this.refund(od.getId(),total);
+        });
     }
 }

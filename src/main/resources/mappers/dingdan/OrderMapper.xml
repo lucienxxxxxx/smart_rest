@@ -3,33 +3,48 @@
 <mapper namespace="com.pitaya.smart_rest.dingdan.mapper.OrderMapper">
     <select id="selectOrderModelPage" resultType="com.pitaya.smart_rest.dingdan.model.OrderModel"
             parameterType="com.pitaya.smart_rest.dingdan.query.OrderQuery">
-                SELECT
-                o.id,o.member_id,o.order_date,o.state,o.descriptions,o.comments,o.tuopan_id,m.mobile
-                FROM
-                t_order o
-                LEFT JOIN t_member m
-                ON o.member_id = m.id
-                <where>
-                    <if test="orderQuery.id != null and orderQuery.id!=''">
-                        AND o.id LIKE CONCAT('%',#{orderQuery.id},'%')
-                    </if>
-                    <if test="orderQuery.memberId != null">
-                        AND o.member_id LIKE CONCAT('%',#{orderQuery.memberId},'%')
-                    </if>
-                    <if test="orderQuery.state != null">
-                        AND o.state LIKE CONCAT('%',#{orderQuery.state},'%')
-                    </if>
-                    <if test="orderQuery.mobile != null and orderQuery.mobile!=''">
-                        AND m.mobile LIKE CONCAT('%',#{orderQuery.mobile},'%')
-                    </if>
-                    <if test="orderQuery.orderDate != null and orderQuery.orderDate!='' ">
-                        AND o.order_date &gt;= #{orderQuery.orderDate}
-                    </if>
-                    <if test="orderQuery.endDate != null and orderQuery.endDate!='' ">
-                        AND o.order_date &lt;= #{orderQuery.endDate}
-                    </if>
-
-                </where>
-
+        select
+        o.id as id,
+        o.order_date,
+        o.member_id,
+        o.state,
+        o.descriptions,
+        o.tuopan_id,
+        m.mobile,
+        sum(od.virtual_acc) as virtual_acc,
+        sum(od.gift_acc) as gift_acc,
+        sum(od.allowance_acc) as allowance_ac,
+        sum(od.cash_acc) as cash_acc,
+        sum(od.charge_acc) as charge_acc,
+        (sum(od.virtual_acc)+sum(od.gift_acc)+sum(od.allowance_acc)+sum(od.cash_acc)+sum(od.charge_acc)) as total,
+        (sum( r.virtual_acc ) + sum( r.gift_acc ) + sum( r.allowance_acc ) + sum( r.cash_acc ) + sum( r.charge_acc ) )
+        AS refund_total
+        from t_order o
+        left join t_order_detail od on o.id=od.order_id
+        LEFT JOIN t_member m ON o.member_id = m.id
+        LEFT JOIN t_refund r ON r.order_detail_id = od.id
+        <where>
+            <if test="orderQuery.id != null and orderQuery.id!=''">
+                AND o.id LIKE CONCAT('%',#{orderQuery.id},'%')
+            </if>
+            <if test="orderQuery.memberId != null">
+                AND o.member_id LIKE CONCAT('%',#{orderQuery.memberId},'%')
+            </if>
+            <if test="orderQuery.state != null">
+                AND o.state LIKE CONCAT('%',#{orderQuery.state},'%')
+            </if>
+            <if test="orderQuery.mobile != null and orderQuery.mobile!=''">
+                AND m.mobile LIKE CONCAT('%',#{orderQuery.mobile},'%')
+            </if>
+            <if test="orderQuery.orderDate != null and orderQuery.orderDate!='' ">
+                AND o.order_date &gt;= #{orderQuery.orderDate}
+            </if>
+            <if test="orderQuery.endDate != null and orderQuery.endDate!='' ">
+                AND o.order_date &lt;= #{orderQuery.endDate}
+            </if>
+        </where>
+        GROUP BY(o.id)
+        ORDER BY
+        ( o.order_date ) desc
     </select>
 </mapper>

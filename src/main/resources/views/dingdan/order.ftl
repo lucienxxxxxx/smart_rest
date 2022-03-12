@@ -18,7 +18,7 @@
         <span></span><span></span><span></span><span></span>
     </div>
 </div>
-<!-- 正文开始 -->
+<!---------------------------------------- 顶部搜索---------------------------------- -->
 <div class="layui-fluid">
     <div class="layui-card">
         <div class="layui-card-body">
@@ -80,18 +80,12 @@
 
 </div>
 
-<!-- 表格操作列 -->
+<!-- ---------------------------------------------表格操作列-------------------------------------------- -->
 <script type="text/html" id="tableBarTbAdv">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看详情</a>
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <#--    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>-->
+    <#--    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
 </script>
-<#--<!-- 表格状态列 &ndash;&gt;-->
-<#--<script type="text/html" id="tplStateTbAdv">-->
-<#--    <input type="checkbox" lay-filter="ckStateTbAdv" value="{{d.userId}}" lay-skin="switch"-->
-<#--           lay-text="正常|锁定" {{d.state==0?'checked':''}}/>-->
-<#--</script>-->
-
 <script>
     layui.use(['layer', 'form', 'table', 'util', 'laydate', 'admin',], function () {
         var $ = layui.jquery;
@@ -103,7 +97,7 @@
         var admin = layui.admin;
         form.render('select');
 
-        // 渲染表格
+        //------------------------------------------- 渲染表格---------------------------------------------
         var insTb = table.render({
             elem: '#tableTbAdv',
             url: '${ctx}/dingdan/order/list',
@@ -114,31 +108,29 @@
             cols: [[
                 {fixed: 'left', field: 'id', align: 'center', sort: true, title: '订单号', minWidth: 200},
                 {field: 'memberId', align: 'center', sort: true, title: '会员号'},
-                {field: 'mobile', align: 'center', sort: true, title: '手机号'},
+                {field: 'mobile', align: 'center', sort: true, title: '手机号', minWidth: 150},
                 {field: 'tuopanId', align: 'center', sort: true, title: '托盘号'},
                 {field: 'orderDate', sort: true, align: 'center', title: '创建时间', minWidth: 200},
-                {
-                    field: 'state', title: '状态', templet: function (d) {
+                {field: 'total', align: 'center', sort: true, title: '消费总额', templet: function (d) {
+                        if (d.total == null) {
+                            d.total =0
+                        }
+                        var str = '<span style="font-weight: bold">'+d.total +'元</span>'
+                        return str}, totalRow: true},
+                {field: 'refundTotal', align: 'center', sort: true, title: '退款总额', templet: function (d) {if (d.refundTotal==null){return '0元'}return d.refundTotal + '元'}, totalRow: true},
+                {field: 'state', title: '状态', templet: function (d) {
                         var strs = [
                             '<span style="color: #189700">订单完成</span>',
                             '<span style="color: #af0000">请求退款</span>',
                             '<span style="color: #0e2fe5">退款成功</span>'
                         ];
-                        return strs[d.state];
-                    }, title: '状态'
-                },
-                {field: 'descriptions', align: 'center', sort: true, title: '描述'},
-                {field: 'comments', align: 'center', sort: true, title: '评论'},
-                {fixed: 'right', align: 'center', toolbar: '#tableBarTbAdv', title: '操作', minWidth: 200}
+                        return strs[d.state];}, title: '状态'},
+                {fixed: 'right', align: 'center', toolbar: '#tableBarTbAdv', title: '操作'}
             ]]
         });
 
-        // 搜索
-        form.on('submit(formSubSearchTbAdv)', function (data) {
-            insTb.reload({where: data.field}, 'data');
-        });
 
-        //监听工具条
+        //-----------------------------------------表格工具条------------------------------
         table.on('tool(tableTbAdv)', function (obj) {
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值
@@ -148,18 +140,22 @@
             } else if (layEvent === 'del') { //删除
                 layer.msg('点击了删除');
             } else if (layEvent === 'detail') { //查看详情
-
-                layui.layer.open({
+                var index = layui.layer.open({
                     type: 2,
                     title: '订单详情',
                     content: '${ctx}/dingdan/order/toOrderDetailPage/' + data.id,
-                    area: ["100%", "100%"],
+                    // area: ["100%", "100%"],
                     maxmin: true
                 });
+                layer.full(index)
             }
         });
 
-
+        //-----------------------------------------顶部按钮--------------------------------
+        // 搜索
+        form.on('submit(formSubSearchTbAdv)', function (data) {
+            insTb.reload({where: data.field}, 'data');
+        });
 
         // 渲染laydate
         laydate.render({
@@ -171,6 +167,7 @@
             elem: '#edtDateTbAdv1',
             type: 'datetime'
         });
+
 
     });
 </script>

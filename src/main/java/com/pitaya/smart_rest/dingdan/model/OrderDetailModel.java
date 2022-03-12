@@ -46,4 +46,8 @@ public class OrderDetailModel {
      * 重量
      */
     private Double weight;
+
+    private Float total;
+
+    private Float refundTotal;
 }

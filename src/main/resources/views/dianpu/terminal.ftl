@@ -149,12 +149,14 @@
 <script type="text/html" id="tableBarFood">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="setFood">设置</a>
 </script>
+
 <!-- 表格状态列 -->
 <script type="text/html" id="terminalTbState">
     <input type="checkbox" lay-filter="terminalTbStateCk" value="{{d.id}}" lay-skin="switch"
            lay-text="启用|停用" {{d.state==0?'checked':''}} style="display: none;"/>
     <p style="display: none;">{{d.state==0?'启用':'停用'}}</p>
 </script>
+
 <script>
     layui.use(['layer', 'form', 'table', 'util', 'dropdown','admin'], function () {
         var $ = layui.jquery;

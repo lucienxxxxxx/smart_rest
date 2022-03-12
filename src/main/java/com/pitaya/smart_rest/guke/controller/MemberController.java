@@ -18,5 +18,4 @@ import com.pitaya.smart_rest.base.BaseController;
 @Controller
 @RequestMapping("/guke/member")
 public class MemberController extends BaseController {
-
 }

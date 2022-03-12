@@ -19,5 +19,4 @@ public class RevenueController {
         return "stats/revenue";
     }
 
-
 }

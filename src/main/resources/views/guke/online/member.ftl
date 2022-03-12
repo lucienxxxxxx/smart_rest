@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>会员管理</title>
     <#include "../../common.ftl">
+    <style>
+        .layui-table-cell{
+            text-align: center;
+            height: auto;
+            white-space: normal;
+        }
+    </style>
 </head>
 <body>
 <!-- 页面加载loading -->
@@ -20,12 +27,12 @@
         <div class="layui-card-body table-tool-mini full-table">
             <div class="layui-form toolbar">
                 <div class="layui-form-item">
-                    <div class="layui-inline">
-                        <label class="layui-form-label w-auto">会员号:</label>
-                        <div class="layui-input-inline mr0">
-                            <input name="id" class="layui-input" type="text" placeholder="请输入会员号"/>
-                        </div>
-                    </div>
+<#--                    <div class="layui-inline">-->
+<#--                        <label class="layui-form-label w-auto">会员号:</label>-->
+<#--                        <div class="layui-input-inline mr0">-->
+<#--                            <input name="id" class="layui-input" type="text" placeholder="请输入会员号"/>-->
+<#--                        </div>-->
+<#--                    </div>-->
                     <div class="layui-inline">
                         <label class="layui-form-label w-auto">手机号:</label>
                         <div class="layui-input-inline mr0">
@@ -155,11 +162,14 @@
             toolbar: true,
             cellMinWidth: 100,
             cols: [[
-                {fixed: 'left',field: 'id', sort: true, title: 'ID'},
-                {field: 'nickname', sort: true, title: '用户名'},
+                {field: 'id', sort: true, title: 'ID'},
+                // {field: 'nickname', sort: true, title: '用户名'},
                 {field: 'mobile', sort: true, title: '手机号',minWidth: 150},
                 {field: 'trueName', sort: true, title: '真实姓名'},
-                {field: 'faceUrl', sort: true, title: '头像'},//后期修改
+                {field: 'faceUrl',minWidth:150, sort: true, title: '头像',templet:function (d) {
+                        var result="<img src='http://175.178.5.39:8088/face_recognition/"+d.weChatId+"'>"
+                        return result;
+                    }},//后期修改
                 {field: 'weChatId', sort: true, title: '微信号'},
                 {field: 'virtualAcc', minWidth: 120,align: 'center', sort: true, title: '虚拟账户',templet:function (d) {return d.virtualAcc+'元'} , totalRow: true},
                 {field: 'giftAcc',minWidth: 120, align: 'center', sort: true, title: '赠送账户',templet:function (d) {return d.giftAcc+'元'} , totalRow: true},
@@ -177,7 +187,7 @@
                         return strs[d.state];
                     }, title: '状态'
                 },
-                {fixed: 'right',align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: 250}
+                {align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: 250}
             ]]
         });
 

@@ -107,6 +107,16 @@
                 </div>
 
                 <div class="layui-form-item">
+                    <label class="layui-form-label layui-form-required">晚餐结束时间:</label>
+                    <div class="layui-input-block">
+                        <input id="edtDinnerEnd" type="text" name="dinnerEnd" placeholder="请选择晚餐结束时间"
+                               value="${rest.dinnerEnd!''}" class="layui-input date-icon" autocomplete="off"
+                               lay-verType="tips" lay-verify="required"
+                               required/>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn" lay-filter="formSubmitBas" lay-submit>&emsp;设置&emsp;</button>
                         <button type="reset" class="layui-btn layui-btn-primary">&emsp;重置&emsp;</button>
@@ -133,6 +143,13 @@
         // 渲染laydate
         laydate.render({
             elem: '#edtLunchEnd',
+            type: 'time',
+            format: 'HH:mm:ss'
+
+        });
+        // 渲染laydate
+        laydate.render({
+            elem: '#edtDinnerEnd',
             type: 'time',
             format: 'HH:mm:ss'
 

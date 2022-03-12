@@ -28,20 +28,9 @@
                         <label class="layui-form-label">订单号:</label>
                         <span style="font-size: larger ;line-height: 38px">${orderId}</span>
                     </div>
-                    <div class="layui-inline ">
-                        <label class="layui-form-label">状&emsp;&emsp;态：</label>
-                        <div class="layui-input-inline">
-                            <select name="state">
-                                <option value="">所有</option>
-                                <option value="0">订单完成</option>
-                                <option value="1">请求退款</option>
-                                <option value="2">退款成功</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="layui-inline" style="padding-left: 20px;">
                         <button class="layui-btn icon-btn" lay-filter="formSubSearchTbAdv" lay-submit>
-                            <i class="layui-icon">&#xe615;</i>搜索
+                            整单退款
                         </button>
                     </div>
                 </div>
@@ -54,14 +43,10 @@
 <!-- 表格操作列 -->
 <script type="text/html" id="tableBarTbAdv">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="refund">退款</a>
-<#--    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>-->
-<#--    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+    <#--    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>-->
+    <#--    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
 </script>
-<!-- 表格状态列 -->
-<script type="text/html" id="tplStateTbAdv">
-    <input type="checkbox" lay-filter="ckStateTbAdv" value="{{d.userId}}" lay-skin="switch"
-           lay-text="正常|锁定" {{d.state==0?'checked':''}}/>
-</script>
+
 <#--退款弹窗框-->
 <script type="text/html" id="refundOpt">
     <form id="refundForm" lay-filter="refundForm" class="layui-form model-form">
@@ -88,42 +73,67 @@
         var laydate = layui.laydate;
         var admin = layui.admin;
         form.render('select');
-        // 渲染表格
+
+
+        // ========================================渲染表格=======================================
         var insTb = table.render({
             elem: '#tableTbAdv',
             url: '${ctx}/dingdan/orderDetail/list?orderId=' + '${orderId}',
             page: true,
             cellMinWidth: 100,
-            totalRow: true ,//开启合计行
+            totalRow: true,//开启合计行
             cols: [[
-                {fixed: 'left',field: 'foodName', align: 'center', sort: true, title: '食物名称'},
-                {field: 'weight', align: 'center', sort: true, title: '重量',templet:function (d) {return d.weight+'克'}},
-                {field: 'createTime', sort: true, align: 'center', title: '创建时间',totalRowText: '合计：'},
-                {field: 'virtualAcc', align: 'center', sort: true, title: '虚拟账户',templet:function (d) {return d.virtualAcc+'元'} , totalRow: true},
-                {field: 'giftAcc', align: 'center', sort: true, title: '赠送账户',templet:function (d) {return d.giftAcc+'元'} , totalRow: true},
-                {field: 'allowanceAcc', align: 'center', sort: true, title: '补贴账户', templet:function (d) {return d.allowanceAcc+'元'} ,totalRow: true},
-                {field: 'cashAcc', align: 'center', sort: true, title: '现金账户',templet:function (d) {return d.cashAcc+'元'} ,totalRow: true},
-                {field: 'chargeAcc', align: 'center', sort: true, title: '充值账户',templet:function (d) {return d.chargeAcc+'元'} , totalRow: true},
-                {
-                    field: 'state', title: '状态', templet: function (d) {
+                {fixed: 'left', field: 'foodName', align: 'center', sort: true, title: '食物名称'},
+                {field: 'createTime', sort: true, align: 'center', title: '创建时间'},
+                {field: 'weight', align: 'center', sort: true, title: '重量', templet: function (d) {return d.weight + '克'}, totalRowText: '合计：'},
+                {field: 'virtualAcc', align: 'center', sort: true, title: '虚拟账户', templet: function (d) {return d.virtualAcc + '元'}, totalRow: true},
+                {field: 'giftAcc', align: 'center', sort: true, title: '赠送账户', templet: function (d) {return d.giftAcc + '元'}, totalRow: true},
+                {field: 'allowanceAcc', align: 'center', sort: true, title: '补贴账户', templet: function (d) {return d.allowanceAcc + '元'}, totalRow: true},
+                {field: 'cashAcc', align: 'center', sort: true, title: '现金账户', templet: function (d) {return d.cashAcc + '元'}, totalRow: true},
+                {field: 'chargeAcc', align: 'center', sort: true, title: '充值账户', templet: function (d) {return d.chargeAcc + '元'}, totalRow: true},
+                {field: 'total', align: 'center', sort: true, title: '消费总额', templet: function (d) {
+                        var str = '<span style="font-weight: bold">'+d.total +'元</span>'
+                    return str}, totalRow: true},
+                {field: 'refundTotal', align: 'center', sort: true, title: '退款总额', templet: function (d) {if (d.refundTotal==null){return '0元'}return d.refundTotal + '元'}, totalRow: true},
+                {field: 'state', title: '状态', templet: function (d) {
                         var strs = [
-                            '<span style="color: #189700">订单完成</span>',
+                            '<span style="color: #189700">子订单完成</span>',
                             '<span style="color: #af0000">请求退款</span>',
                             '<span style="color: #0e2fe5">退款成功</span>'
-                        ];
-                        return strs[d.orderDetailState];
-                    }, title: '状态'
-                },
-                {fixed: 'right',align: 'center', toolbar: '#tableBarTbAdv', title: '操作', minWidth: 200}
+                        ];return strs[d.orderDetailState];}, title: '状态'},
+                {fixed: 'right', align: 'center', toolbar: '#tableBarTbAdv', title: '操作', minWidth: 50}
             ]]
         });
 
-        // 搜索
-        form.on('submit(formSubSearchTbAdv)', function (data) {
-            insTb.reload({where: data.field}, 'data');
+        //-----------------------------------------顶部按钮--------------------------------
+        // 整单退款
+        form.on('submit(formSubSearchTbAdv)', function () {
+            layer.confirm('是否确认全单退款？', {
+                skin: 'layui-layer-admin',
+                shade: .1
+            }, function (i) {
+                layer.close(i);
+                layer.load(2);
+                $.post('${ctx}/dingdan/orderDetail/allRefund', {
+                    orderId:"${orderId}"
+                }, function (res) {
+                    layer.closeAll('loading');
+                    if (res.code == 200) {
+                        layer.msg(res.msg, {icon: 1});
+                        insTb.reload({}, 'data');
+                    } else {
+                        layer.msg(res.msg, {icon: 2});
+                    }
+                }, 'json');
+            });
         });
 
-        //监听工具条
+        // 渲染laydate
+        laydate.render({
+            elem: '#edtDateTbAdv'
+        });
+
+        //-----------------------------------------表格工具条------------------------------
         table.on('tool(tableTbAdv)', function (obj) {
             var data = obj.data; //获得当前行数据
             var layEvent = obj.event; //获得 lay-event 对应的值
@@ -136,7 +146,7 @@
             }
         });
 
-        //退款弹窗
+        //---------------------------------------------退款弹窗---------------------------
         function showRefund(orderDetail) {
             admin.open({
                 type: 1,
@@ -151,7 +161,7 @@
                         if (data.field.refundMoney > orderMoney) {
                             layer.open({
                                 title: '退款失败'
-                                , content: '退款金额不能大于订单总金额'
+                                , content: '退款金额不能大于子订单总金额'
                             });
                             return false;
                         } else {
@@ -161,7 +171,7 @@
                                 orderId: orderDetail.orderId,
                                 refundMoney: data.field.refundMoney
                             }
-                            $.post(url,refundData, function (res) {
+                            $.post(url, refundData, function (res) {
                                 layer.closeAll('loading');
                                 if (res.code == 200) {
                                     layer.close(dIndex);
@@ -178,10 +188,7 @@
             });
         }
 
-        // 渲染laydate
-        laydate.render({
-            elem: '#edtDateTbAdv'
-        });
+
 
     });
 </script>
