@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.activity.mapper.MemberActivityMapper">
+    <select id="selectModelPage" resultType="com.pitaya.smart_rest.activity.model.MemberActivityModel"
+            parameterType="com.pitaya.smart_rest.activity.query.MemberActivityQuery">
+        select ma.id,
+               ma.member_id,
+               ma.charge_activity_id,
+               ma.is_use,
+               ma.use_date,
+               m.mobile,
+               ca.note,
+               m.true_name,
+               ca.activity_name
+        from t_member_activity ma
+                 join t_member m on ma.member_id = m.id
+                 join t_charge_activity ca on ma.charge_activity_id = ca.id
+        <where>
+            m.is_valid=1
+            <if test="query.memberId != null ">
+                AND ma.member_id LIKE CONCAT('%',#{query.memberId},'%')
+            </if>
+            <if test="query.isUse != null ">
+                AND ma.is_use LIKE CONCAT('%',#{query.isUse},'%')
+            </if>
+            <if test="query.mobile != null and query.mobile!=''">
+                AND m.mobile LIKE CONCAT('%',#{query.mobile},'%')
+            </if>
+            <if test="query.note != null and query.note!=''">
+                AND ca.note LIKE CONCAT('%',#{query.note},'%')
+            </if>
+            <if test="query.trueName != null and query.trueName!=''">
+                AND m.true_name LIKE CONCAT('%',#{query.trueName},'%')
+            </if>
+        </where>
+        ORDER BY ca.create_date
+    </select>
+</mapper>

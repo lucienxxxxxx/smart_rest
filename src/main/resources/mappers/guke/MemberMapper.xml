@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.pitaya.smart_rest.guke.mapper.MemberMapper">
+    <select id="selectModelPage" parameterType="com.pitaya.smart_rest.activity.query.ChargeActivityQuery"
+            resultType="com.pitaya.smart_rest.activity.model.ChargeModel">
+        select m.id,
+               m.mobile,
+               m.true_name,
+               m.org_id,
+               m.member_type,
+               m.virtual_acc,
+               m.gift_acc,
+               m.allowance_acc,
+               m.cash_acc,
+               m.charge_acc,
+               m.state,
+               (m.virtual_acc + m.gift_acc + m.allowance_acc + m.cash_acc + m.charge_acc) as total
+        from t_member m
+        <where>
+            <if test="query.keyword!=null and query.keyword!=''">
+                m.mobile like CONCAT('%',#{query.keyword},'%')
+                OR  m.true_name like CONCAT('%',#{query.keyword},'%')
+            </if>
+        </where>
+        order by m.create_date
 
+    </select>
 </mapper>

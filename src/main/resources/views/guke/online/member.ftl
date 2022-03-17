@@ -51,6 +51,12 @@
                             <input name="note" class="layui-input" type="text" placeholder="请输入描述"/>
                         </div>
                     </div>
+<#--                    <div class="layui-inline">-->
+<#--                        <label class="layui-form-label w-auto">搜索：</label>-->
+<#--                        <div class="layui-input-inline mr0">-->
+<#--                            <input name="keyword" class="layui-input" type="text" placeholder="输入关键字"/>-->
+<#--                        </div>-->
+<#--                    </div>-->
                     <div class="layui-inline ">
                         <label class="layui-form-label">状&emsp;&emsp;态：</label>
                         <div class="layui-input-inline">
@@ -169,7 +175,7 @@
                 {field: 'faceUrl',minWidth:150, sort: true, title: '头像',templet:function (d) {
                         var result="<img src='http://175.178.5.39:8088/face_recognition/"+d.weChatId+"'>"
                         return result;
-                    }},//后期修改
+                    }},
                 {field: 'weChatId', sort: true, title: '微信号'},
                 {field: 'virtualAcc', minWidth: 120,align: 'center', sort: true, title: '虚拟账户',templet:function (d) {return d.virtualAcc+'元'} , totalRow: true},
                 {field: 'giftAcc',minWidth: 120, align: 'center', sort: true, title: '赠送账户',templet:function (d) {return d.giftAcc+'元'} , totalRow: true},
