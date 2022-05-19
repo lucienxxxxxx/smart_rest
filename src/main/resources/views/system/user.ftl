@@ -27,9 +27,9 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label w-auto">邮箱:</label>
+                        <label class="layui-form-label w-auto">真实姓名:</label>
                         <div class="layui-input-inline mr0">
-                            <input name="email" class="layui-input" type="text" placeholder="请输入邮箱"/>
+                            <input name="trueName" class="layui-input" type="text" placeholder="请输入真实姓名"/>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -38,6 +38,7 @@
                             <input name="phone" class="layui-input" type="text" placeholder="请输入电话号码"/>
                         </div>
                     </div>
+
                     <div class="layui-inline" style="padding-right: 110px;">
                         <button class="layui-btn icon-btn" lay-filter="formSubSearchUser" lay-submit>
                             <i class="layui-icon">&#xe615;</i>搜索
@@ -63,7 +64,7 @@
 <script type="text/html" id="modelUser">
     <form id="modelUserForm" lay-filter="modelUserForm" class="layui-form model-form">
         <#-- 用户ID -->
-        <input name="id" type="hidden" />
+        <input name="id" type="hidden"/>
         <div class="layui-form-item">
             <label class="layui-form-label layui-form-required">用户名</label>
             <div class="layui-input-block">
@@ -99,23 +100,35 @@
                 </select>
             </div>
         </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label layui-form-required">所属餐厅:</label>
+            <div class="layui-input-block">
+                <div id="resId"></div>
+            </div>
+        </div>
         <div class="layui-form-item text-right">
             <button class="layui-btn layui-btn-primary" type="button" ew-event="closePageDialog">取消</button>
             <button class="layui-btn" lay-filter="modelSubmitUser" lay-submit>保存</button>
         </div>
     </form>
 </script>
-
+<!--------------------------------------------------- 表格状态列 ------------------------------------------------>
+<script type="text/html" id="tuopanTbState">
+    <input type="checkbox" lay-filter="tuopanTbStateCk" value="{{d.id}}" lay-skin="switch"
+           lay-text="启用|停用" {{d.state==0?'checked':''}} style="display: none;"/>
+    <p style="display: none;">{{d.state==0?'启用':'停用'}}</p>
+</script>
 <!-- js部分 -->
 <script>
-    layui.use(['layer', 'form', 'table', 'util', 'admin', 'formSelects', "xmSelect"], function () {
+    layui.use(['layer', 'form', 'table', 'util', 'admin', 'formSelects', "xmSelect",], function () {
         var $ = layui.jquery;
         var layer = layui.layer;
         var form = layui.form;
         var table = layui.table;
         var admin = layui.admin;
         var formSelects = layui.formSelects;
-
+        var xmSelect = layui.xmSelect;
 
         // 渲染表格
         var insTb = table.render({
@@ -126,17 +139,26 @@
             cellMinWidth: 100,
             cols: [[
                 {type: 'numbers'},
-                {field: 'userName', sort: true, title: '用户名'},
-                {field: 'trueName', sort: true, title: '真实姓名'},
-                {field: 'email', sort: true, title: '邮箱'},
-                {field: 'phone', sort: true, title: '电话号码'},
+                {field: 'userName', align: 'center', title: '用户名'},
+                {field: 'trueName', align: 'center', title: '真实姓名'},
                 {
-                    field: 'createDate', sort: true, title: '创建时间'
+                    field: 'roles', align: 'center', title: '角色', width: 150, templet: function (d) {
+                        let roles = d.roles.split(',');
+                        let result = '';
+                        roles.forEach(function (role) {
+                            result = result + '<span class="layui-badge layui-badge-gray">' + role + '</span>' + '&nbsp;&nbsp;';
+                        })
+                        return result;
+                    }
                 },
-                {
-                    field: 'updateDate', sort: true, title: '更新时间'
-                },
-                {align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: 200}
+                {field: 'restaurantName', align: 'center', title: '所属餐厅'},
+                {field: 'phone', align: 'center', width: '140', title: '电话号码'},
+                {field: 'email', align: 'center', title: '邮箱'},
+                {field: 'descriptions', align: 'center', title: '描述'},
+                {field: 'createDate', align: 'center', width: '180', sort: true, title: '创建时间'},
+                {field: 'loginDate', align: 'center', width: '180', sort: true, title: '最后登录时间'},
+                {field: 'state', title: '状态', templet: '#tuopanTbState', sort: true, width: 100},
+                {fixed: 'right', align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: 200}
             ]]
         });
 
@@ -192,6 +214,30 @@
                         return false;
                     });
 
+                    //加载餐厅下拉框
+                    $.get('${ctx}/system/restaurant/getAllRestaurant',function (res) {
+                        var insRoleSel = xmSelect.render({
+                            el: '#resId',
+                            name: 'resId',
+                            radio: true,
+                            clickClose: true,
+                            layVerify: 'required',
+                            layVerType: 'tips',
+                            data:res
+                        });
+                        // 回显选中餐厅
+                        if (mUser && mUser.restaurantName) {
+                            res.forEach(function(res){
+                                if (res.name ==mUser.restaurantName){
+                                    insRoleSel.setValue([res.value]);
+                                }
+                            })
+
+                        }
+                    })
+
+
+                    //加载角色下拉框
                     if (mUser) {
                         var userId = mUser.id
                         //加载下拉框
@@ -201,7 +247,7 @@
                             keyName: 'roleName',  // 下拉框中的文本内容，要与返回的数据中对应key一致
                             keyVal: 'id'
                         }, true);
-                    }else{
+                    } else {
                         //加载下拉框
                         formSelects.config("selectId", {
                             type: "post", // 请求方式
@@ -210,8 +256,6 @@
                             keyVal: 'id'
                         }, true);
                     }
-
-
 
 
                 }
@@ -239,7 +283,23 @@
                 }, 'json');
             });
         }
-
+        /* 修改用户状态 */
+        form.on('switch(tuopanTbStateCk)', function (obj) {
+            var loadIndex = layer.load(2);
+            $.post('${ctx}/system/user/switchStatus', {
+                id: obj.elem.value,
+                state: obj.elem.checked ? 0 : 1
+            }, function (res) {
+                layer.close(loadIndex);
+                if (res.code === 200) {
+                    layer.msg(res.msg, {icon: 1});
+                } else {
+                    layer.msg(res.msg, {icon: 2});
+                    $(obj.elem).prop('checked', !obj.elem.checked);
+                    form.render('checkbox');
+                }
+            }, 'json');
+        });
 
         // 重置密码
         function resetPsw(userId, userName) {
@@ -261,6 +321,7 @@
                 }, 'json');
             });
         }
+
 
     });
 </script>

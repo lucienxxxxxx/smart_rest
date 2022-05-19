@@ -24,7 +24,6 @@ import lombok.EqualsAndHashCode;
 @TableName("t_order_detail")
 public class OrderDetail implements Serializable {
 
-    private static final long serialVersionUID = 1L;
     @TableId(value="id" , type = IdType.AUTO)
     private Integer id;
 

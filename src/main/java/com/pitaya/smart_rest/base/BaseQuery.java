@@ -8,5 +8,5 @@ public class BaseQuery {
     private Integer page=1;
     private Integer limit=20;
     private String keyword;
-
+    private Integer resId;
 }

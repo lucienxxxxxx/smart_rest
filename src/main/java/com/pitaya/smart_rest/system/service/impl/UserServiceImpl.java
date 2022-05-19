@@ -3,6 +3,9 @@ package com.pitaya.smart_rest.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pitaya.smart_rest.dianpu.entity.RfidTuopan;
+import com.pitaya.smart_rest.dingdan.model.OrderDetailModel;
+import com.pitaya.smart_rest.dingdan.model.OrderModel;
 import com.pitaya.smart_rest.system.entity.User;
 import com.pitaya.smart_rest.system.entity.UserRole;
 import com.pitaya.smart_rest.system.mapper.UserMapper;
@@ -46,32 +49,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Override
     public Map<String, Object> selectUsersByParams(UserQuery userQuery) {
-        //查询器
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
-        //查询条件设置
-
-        //逻辑删除
-        queryWrapper.eq("is_valid",1);
-
-        if (userQuery.getUserName() != null && !StringUtils.isBlank(userQuery.getUserName())) {
-            queryWrapper.like("user_name", userQuery.getUserName());
-        }
-        if (userQuery.getEmail() != null&& !StringUtils.isBlank(userQuery.getEmail())) {
-            queryWrapper.like("email", userQuery.getEmail());
-        }
-        if (userQuery.getPhone() != null&& !StringUtils.isBlank(userQuery.getPhone())) {
-            queryWrapper.like("phone", userQuery.getPhone());
-        }
-        //分页
-        Page<User> pages = new Page<User>(userQuery.getPage(), userQuery.getLimit());
-        IPage<User> iPage = userMapper.selectPage(pages, queryWrapper);
-        List<User> list = iPage.getRecords();
-        long count = iPage.getTotal();
+        Page<User> page = new Page<User>(userQuery.getPage(), userQuery.getLimit());
+        IPage<User> iPage = userMapper.selectUserModelPage(page,userQuery);
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<String, Object>();
         linkedHashMap.put("code", 0);
         linkedHashMap.put("msg", "");
-        linkedHashMap.put("count", count);
-        linkedHashMap.put("data", list);
+        linkedHashMap.put("count", iPage.getTotal());
+        linkedHashMap.put("data", iPage.getRecords());
         return linkedHashMap;
     }
 
@@ -177,12 +161,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public void del(Integer userId) {
         User user = userMapper.selectById(userId);
         AssertUtil.isTrue(userId==null||user==null,"该用户不存在");
-
-        //设置逻辑删除
-        user.setIsValid(0);
-        user.setUpdateDate((new Date()));
-
-        AssertUtil.isTrue(userMapper.updateById(user)!=1,"用户删除失败");
+        AssertUtil.isTrue(userMapper.deleteById(userId)!=1,"用户删除失败");
     }
 
     /**
@@ -218,8 +197,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = userMapper.selectOne(wrapper);
         //判断用户是否存在
         AssertUtil.isTrue(user == null, "该用户不存在");
+        //判断用户状态
+        AssertUtil.isTrue(user.getState()==1,"该账号已被停用");
         //进行密码判断
         AssertUtil.isTrue(!Md5Util.encode(userPwd).equals(user.getUserPwd()), "密码不正确");
+        //更新最新登录时间
+        user.setLoginDate(new Date());
+        userMapper.updateById(user);
         //新建模型
         UserModel userModel = new UserModel();
         userModel.setUserIdStr(UserIDBase64.encoderUserID(user.getId()));
@@ -278,5 +262,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 判断确认密码是否与新密码一致
         AssertUtil.isTrue(!newPwd.equals(repeatPwd), "确认密码与新密码不一致！");
 
+    }
+
+
+    /**
+     * 修改状态
+     * @param id
+     * @param state
+     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void switchStatus(Integer id, Integer state) {
+        User user = userMapper.selectById(id);
+        AssertUtil.isTrue(user==null,"该记录不存在");
+        user.setState(state);
+        AssertUtil.isTrue(userMapper.updateById(user)!=1,"切换状态失败");
     }
 }

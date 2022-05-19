@@ -67,14 +67,8 @@ public class IndexController extends BaseController {
         request.getSession().setAttribute("user", user);
         request.getSession().setAttribute("userId", user.getId());
         List<ModuleTree> maps = permissionService.queryModelPermissions(userId);
-        System.out.println(maps);
         request.getSession().setAttribute("menus", maps);
-        // 通过当前登录用户ID查询当前登录用户拥有的资源列表 （查询对应资源的授权码）
-        List<String> permissions = permissionService.queryUserHasRoleHasPermissionByUserId(userId);
-        // 将集合设置到session作用域中
-        request.getSession().setAttribute("permissions", permissions);
-
-        return "main2";
+        return "main";
     }
 
     /**

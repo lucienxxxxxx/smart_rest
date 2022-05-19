@@ -53,7 +53,7 @@ public class Order implements Serializable {
     /**
      * 托盘卡卡号
      */
-    private String tuopanId;
+    private Integer tuopanId;
 
 
 }

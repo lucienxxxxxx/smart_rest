@@ -11,8 +11,10 @@ import lombok.Data;
 public class UserQuery extends BaseQuery {
 
     private String userName; // 用户名
-    private String email; // 邮箱
+    private String trueName;
     private String phone; // 手机号
-
+    private Integer state;
+    private Integer resId;
+    private Integer roleId;
 
 }

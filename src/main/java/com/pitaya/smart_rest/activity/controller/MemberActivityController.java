@@ -44,7 +44,6 @@ public class MemberActivityController extends BaseController {
     @PostMapping("verify")
     @ResponseBody
     public ResultInfo verify(Integer id){
-        System.out.println(id);
         memberActivityService.verify(id);
         return success();
     }

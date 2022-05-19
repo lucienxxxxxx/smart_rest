@@ -56,7 +56,6 @@ public class ModuleController extends BaseController {
     @RequestMapping("queryAllModules")
     @ResponseBody
     public List<TreeModel> queryAllModules(Integer roleId) {
-        System.out.println(moduleService.queryAllModules(roleId));
         return moduleService.queryAllModules(roleId);
     }
 

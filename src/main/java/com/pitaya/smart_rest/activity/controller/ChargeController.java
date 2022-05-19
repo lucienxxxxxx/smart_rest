@@ -3,6 +3,7 @@ package com.pitaya.smart_rest.activity.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pitaya.smart_rest.activity.model.ChargeModel;
+import com.pitaya.smart_rest.activity.query.ChargeQuery;
 import com.pitaya.smart_rest.activity.query.MemberActivityQuery;
 import com.pitaya.smart_rest.activity.vo.ChargeVo;
 import com.pitaya.smart_rest.base.BaseController;
@@ -21,7 +22,7 @@ import java.util.Map;
 /**
  * @ClassName ChargeController
  * @author: lucine
- * @Description TODO
+ * @Description 账号充值
  * @date 2022/3/15 15:33
  * @Version 1.0版本
  */
@@ -39,18 +40,17 @@ public class ChargeController extends BaseController {
 
     @GetMapping("list")
     @ResponseBody
-    public Map<String, Object> list(HttpServletRequest request, BaseQuery query){
+    public Map<String, Object> list(HttpServletRequest request, ChargeQuery query){
         Integer userId = LoginUserUtil.releaseUserIdFromCookie(request);
         return chargeService.queryList(userId,query);
     }
 
     @PostMapping("charge")
     @ResponseBody
-    public ResultInfo charge(String ids,Float virtualAcc,Float giftAcc,Float allowanceAcc,Float cashAcc,Float chargeAcc){
-        System.out.println(ids);
-        System.out.println("充值金额:"+virtualAcc+","+giftAcc+","+allowanceAcc+","+cashAcc+","+chargeAcc);
+    public ResultInfo charge(HttpServletRequest request,String ids,Float virtualAcc,Float giftAcc,Float allowanceAcc,Float cashAcc,Float chargeAcc){
 
-//        chargeService.charge(ids,virtualAcc,giftAcc,allowanceAcc,cashAcc,chargeAcc);
+        Integer userId = LoginUserUtil.releaseUserIdFromCookie(request);
+        chargeService.charge(userId,ids,virtualAcc,giftAcc,allowanceAcc,cashAcc,chargeAcc);
         return success("充值成功");
     }
 

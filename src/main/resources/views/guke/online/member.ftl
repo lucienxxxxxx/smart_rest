@@ -7,10 +7,21 @@
     <title>会员管理</title>
     <#include "../../common.ftl">
     <style>
-        .layui-table-cell{
-            text-align: center;
-            height: auto;
-            white-space: normal;
+        #tableUser + .layui-table-view .layui-table-body tbody > tr > td {
+            padding: 0;
+        }
+
+        #tableUser + .layui-table-view .layui-table-body tbody > tr > td > .layui-table-cell {
+            height: 70px;
+            line-height: 70px;
+        }
+
+        .tb-img-circle {
+            width: 60px;
+            height: 60px;
+            cursor: zoom-in;
+            /*border-radius: 50%;*/
+            /*border: 2px solid #dddddd;*/
         }
     </style>
 </head>
@@ -27,16 +38,16 @@
         <div class="layui-card-body table-tool-mini full-table">
             <div class="layui-form toolbar">
                 <div class="layui-form-item">
-<#--                    <div class="layui-inline">-->
-<#--                        <label class="layui-form-label w-auto">会员号:</label>-->
-<#--                        <div class="layui-input-inline mr0">-->
-<#--                            <input name="id" class="layui-input" type="text" placeholder="请输入会员号"/>-->
-<#--                        </div>-->
-<#--                    </div>-->
                     <div class="layui-inline">
                         <label class="layui-form-label w-auto">手机号:</label>
                         <div class="layui-input-inline mr0">
                             <input name="mobile" class="layui-input" type="text" placeholder="请输入手机号"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label w-auto">所属机构:</label>
+                        <div class="layui-input-inline mr0">
+                            <input name="orgId" id="selectOrg" placeholder="请选择" class="layui-hide"/>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -51,12 +62,6 @@
                             <input name="note" class="layui-input" type="text" placeholder="请输入描述"/>
                         </div>
                     </div>
-<#--                    <div class="layui-inline">-->
-<#--                        <label class="layui-form-label w-auto">搜索：</label>-->
-<#--                        <div class="layui-input-inline mr0">-->
-<#--                            <input name="keyword" class="layui-input" type="text" placeholder="输入关键字"/>-->
-<#--                        </div>-->
-<#--                    </div>-->
                     <div class="layui-inline ">
                         <label class="layui-form-label">状&emsp;&emsp;态：</label>
                         <div class="layui-input-inline">
@@ -69,10 +74,11 @@
                         </div>
                     </div>
                     <div class="layui-inline" style="padding-right: 110px;">
-                        <button class="layui-btn icon-btn" lay-filter="formSubSearchUser" lay-submit>
-                            <i class="layui-icon">&#xe615;</i>搜索
+                        <button class="layui-btn icon-btn" lay-filter="formSubSearchUser" lay-submit><i
+                                    class="layui-icon">&#xe615;</i>搜索
                         </button>
-                        <button id="btnAddUser" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>信息完善</button>
+                        <button id="addInfo" type="button" class="layui-btn">批量信息完善</button>
+                        <button id="memberCharge" type="button" class="layui-btn">批量充值</button>
                     </div>
                 </div>
             </div>
@@ -111,12 +117,12 @@
 <script type="text/html" id="modelUser">
     <form id="modelUserForm" lay-filter="modelUserForm" class="layui-form model-form">
         <#-- 用户ID -->
-        <input name="id" type="hidden" />
+        <input name="id" type="hidden"/>
         <div class="layui-form-item">
             <label class="layui-form-label ">会员号</label>
             <div class="layui-input-block">
                 <input readonly="readonly" name="id" placeholder="请输入会员号" type="text" class="layui-input" maxlength="20"
-                       lay-verType="tips" />
+                       lay-verType="tips"/>
             </div>
         </div>
         <div class="layui-form-item">
@@ -150,13 +156,13 @@
 
 <!-- js部分 -->
 <script>
-    layui.use(['layer', 'form', 'table', 'util', 'admin', 'formSelects', "xmSelect"], function () {
+    layui.use(['layer', 'form', 'table', 'cascader', 'element', 'util', 'laytpl', 'admin', 'formSelects', "xmSelect", 'excel', 'upload'], function () {
         var $ = layui.jquery;
         var layer = layui.layer;
         var form = layui.form;
         var table = layui.table;
         var admin = layui.admin;
-
+        var cascader = layui.cascader;
 
         /**
          * ----------------------------------------渲染表格---------------------------------
@@ -168,51 +174,96 @@
             toolbar: true,
             cellMinWidth: 100,
             cols: [[
-                {field: 'id', sort: true, title: 'ID'},
-                // {field: 'nickname', sort: true, title: '用户名'},
-                {field: 'mobile', sort: true, title: '手机号',minWidth: 150},
-                {field: 'trueName', sort: true, title: '真实姓名'},
-                {field: 'faceUrl',minWidth:150, sort: true, title: '头像',templet:function (d) {
-                        var result="<img src='http://175.178.5.39:8088/face_recognition/"+d.weChatId+"'>"
-                        return result;
-                    }},
-                {field: 'weChatId', sort: true, title: '微信号'},
-                {field: 'virtualAcc', minWidth: 120,align: 'center', sort: true, title: '虚拟账户',templet:function (d) {return d.virtualAcc+'元'} , totalRow: true},
-                {field: 'giftAcc',minWidth: 120, align: 'center', sort: true, title: '赠送账户',templet:function (d) {return d.giftAcc+'元'} , totalRow: true},
-                {field: 'allowanceAcc', minWidth: 120,align: 'center', sort: true, title: '补贴账户', templet:function (d) {return d.allowanceAcc+'元'} ,totalRow: true},
-                {field: 'cashAcc',minWidth: 120, align: 'center', sort: true, title: '现金账户',templet:function (d) {return d.cashAcc+'元'} ,totalRow: true},
-                {field: 'chargeAcc', minWidth: 120,align: 'center', sort: true, title: '充值账户',templet:function (d) {return d.chargeAcc+'元'} , totalRow: true},
-                {field: 'note', sort: true, title: '备注'},
+                {field: 'id', align: 'center', title: 'ID'},
+                {field: 'mobile', align: 'center', title: '手机号', minWidth: 150},
+                {field: 'trueName', align: 'center', title: '真实姓名'},
+                {field: 'orgName', title: '组织'},
                 {
-                    field: 'state', title: '状态', templet: function (d) {
+                    title: '头像', templet: function (d) {
+                        var url = 'http://175.178.5.39:8088/face_recognition/' + d.weChatId;
+                        return '<img data-index="' + (d.LAY_INDEX - 1) + '" src="' + url + '" class="tb-img-circle" tb-img alt=""/>';
+                    }, align: 'center', width: 90, unresize: true
+                },
+                {field: 'weChatId', align: 'center', title: '微信号'},
+                {
+                    field: 'virtualAcc', minWidth: 120, align: 'center', title: '虚拟账户', templet: function (d) {
+                        return d.virtualAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'giftAcc', minWidth: 120, align: 'center', title: '赠送账户', templet: function (d) {
+                        return d.giftAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'allowanceAcc', minWidth: 120, align: 'center', title: '补贴账户', templet: function (d) {
+                        return d.allowanceAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'cashAcc', minWidth: 120, align: 'center', title: '现金账户', templet: function (d) {
+                        return d.cashAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'chargeAcc', minWidth: 120, align: 'center', title: '充值账户', templet: function (d) {
+                        return d.chargeAcc + '元'
+                    }, totalRow: true
+                },
+                {field: 'createDate', align: 'center', width:200,title: '注册时间'},
+                {field: 'note', align: 'center', title: '备注'},
+                {
+                    field: 'state', align: 'center', title: '状态', templet: function (d) {
                         var strs = [
                             '<span style="color: #189700">启用</span>',
                             '<span style="color: #af0000">禁用</span>',
-                            '<span style="color: #0e2fe5">挂失</span>'
-                        ];
+                            '<span style="color: #0e2fe5">挂失</span>'];
                         return strs[d.state];
                     }, title: '状态'
                 },
-                {align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: 250}
+                {fixed: 'right', align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: 230}
             ]]
         });
 
 
+        /* 点击图片放大 */
+        $(document).off('click.tbImg').on('click.tbImg', '[tb-img]', function () {
+            var imgList = table.cache['tableUser'].map(function (d) {
+                return {
+                    src: 'http://175.178.5.39:8088/face_recognition/' + d.weChatId
+                }
+            });
+            layer.photos({photos: {data: imgList, start: $(this).data('index')}, shade: .1, closeBtn: true});
+        });
 
         /**
          * ----------------------------------------顶部工具栏---------------------------------
-        */
-        // 添加
-        $('#btnAddUser').click(function () {
-            //添加就直接弹窗
-            // showEditModel();
+         */
+
+        //批量完善模板
+        $('#addInfo').click(function () {
+            layer.open({
+                type: 2,
+                title: "批量导入信息",
+                area: ['800px', '500px'],
+                content: '${ctx}/guke/onlineMember/addInfo' //打开模板页面
+            });
+        });
+
+        //批量充值
+        $('#memberCharge').click(function () {
+            layer.open({
+                type: 2,
+                title: "批量充值",
+                area: ['800px', '500px'],
+                content: '${ctx}/guke/onlineMember/memberChargeBatch'
+            });
         });
 
         // 搜索
         form.on('submit(formSubSearchUser)', function (data) {
             insTb.reload({where: data.field}, 'data');
         });
-
 
 
         /**
@@ -227,7 +278,7 @@
                 showEditModel(data);
             } else if (layEvent === 'del') { // 删除
                 doDel(data.id, data.trueName);
-            }else if (layEvent === 'switch') { // 切换状态
+            } else if (layEvent === 'switch') { // 切换状态
                 switchStatus(data.id);
 
             }
@@ -327,6 +378,22 @@
                 }, 'json');
             });
         }
+
+
+        /**
+         * 渲染组织下拉菜单
+         */
+        $.get('${ctx}/system/org/getAllOrgList', function (orgData) {
+            cascader.render({
+                elem: '#selectOrg',
+                data: orgData,
+                filterable: true,
+                changeOnSelect: true,
+                trigger: 'hover'
+            });
+        })
+
+
     });
 </script>
 

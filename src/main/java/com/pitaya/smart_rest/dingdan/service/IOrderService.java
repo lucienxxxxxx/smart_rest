@@ -16,5 +16,5 @@ import java.util.Map;
  */
 public interface IOrderService extends IService<Order> {
 
-    Map<String, Object> queryAllOrderByParams(OrderQuery orderQuery);
+    Map<String, Object> queryAllOrderByParams(Integer userId,OrderQuery orderQuery);
 }

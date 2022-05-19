@@ -15,9 +15,11 @@
         m.charge_acc,
         m.state,
         m.note,
-        ru.logic_name
+        ru.logic_name,
+        o.org_name
         from t_member m
         join t_rfid_user ru on m.id = ru.member_id
+        left join t_org o on  o.id=m.org_id
         <where>
             m.member_type = 1
             and ru.type_id = 1
@@ -25,6 +27,9 @@
             and m.res_id = #{memberQuery.resId}
             <if test="memberQuery.id != null ">
                 AND m.id LIKE CONCAT('%',#{memberQuery.id},'%')
+            </if>
+            <if test="memberQuery.orgId != null and memberQuery.orgId!=''">
+                AND m.org_id LIKE CONCAT('%',#{memberQuery.orgId},'%')
             </if>
             <if test="memberQuery.trueName != null and memberQuery.trueName!=''">
                 AND m.true_name LIKE CONCAT('%',#{memberQuery.trueName},'%')

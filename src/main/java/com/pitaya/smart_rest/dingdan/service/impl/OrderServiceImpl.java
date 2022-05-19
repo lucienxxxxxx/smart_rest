@@ -10,6 +10,8 @@ import com.pitaya.smart_rest.dingdan.query.OrderQuery;
 import com.pitaya.smart_rest.dingdan.service.IOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pitaya.smart_rest.system.entity.Role;
+import com.pitaya.smart_rest.system.entity.User;
+import com.pitaya.smart_rest.system.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -30,8 +32,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Resource
     private OrderMapper orderMapper;
 
+    @Resource
+    private UserMapper userMapper;
+
     @Override
-    public Map<String, Object> queryAllOrderByParams(OrderQuery orderQuery) {
+    public Map<String, Object> queryAllOrderByParams(Integer userId,OrderQuery orderQuery) {
+        User user = userMapper.selectById(userId);
+        orderQuery.setResId(user.getResId());
         Page<OrderModel> page = new Page<OrderModel>(orderQuery.getPage(), orderQuery.getLimit());
         IPage<OrderModel> iPage = orderMapper.selectOrderModelPage(page,orderQuery);
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<String, Object>();

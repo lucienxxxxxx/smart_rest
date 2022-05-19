@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +34,7 @@ public class OnlineMemberServiceImpl extends ServiceImpl<OnlineMemberMapper, Mem
     private UserMapper userMapper;
     @Resource
     private OnlineMemberMapper onlineMemberMapper;
+
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
@@ -62,35 +64,60 @@ public class OnlineMemberServiceImpl extends ServiceImpl<OnlineMemberMapper, Mem
      */
     @Override
     public Map<String, Object> queryList(Integer userId, MemberQuery memberQuery) {
+        //处理组织部分
+        if (memberQuery.getOrgId()!=null){
+            //System.out.println("处理之前："+memberQuery.getOrgId());
+            String[] org = memberQuery.getOrgId().split(",");
+            //只要最后的一位
+            memberQuery.setOrgId(org[org.length-1]);
+            //System.out.println("处理之后："+memberQuery.getOrgId());
+        }
+        //处理餐厅
         User user = userMapper.selectById(userId);
-        AssertUtil.isTrue(userId==null||user==null,"该用户不存在");
-        QueryWrapper<Member> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("res_id", user.getResId());//查询该餐厅
-        queryWrapper.eq("member_type", 0);//线上会员
-        if (memberQuery.getState() != null) {
-            queryWrapper.like("state", memberQuery.getState());
-        }
-        if (memberQuery.getId() != null) {
-            queryWrapper.like("id", memberQuery.getId());
-        }
-        if (memberQuery.getTrueName() != null && !StringUtils.isBlank(memberQuery.getTrueName())) {
-            queryWrapper.like("true_name", memberQuery.getTrueName());
-        }
-        if (memberQuery.getMobile() != null && !StringUtils.isBlank(memberQuery.getMobile())) {
-            queryWrapper.like("mobile", memberQuery.getMobile());
-        }
-        if (memberQuery.getNote() != null && !StringUtils.isBlank(memberQuery.getNote())) {
-            queryWrapper.like("note", memberQuery.getNote());
-        }
-
+        AssertUtil.isTrue(userId == null || user == null, "该用户不存在");
+        memberQuery.setResId(user.getResId());
         Page<Member> page = new Page<>(memberQuery.getPage(), memberQuery.getLimit());
-        IPage<Member> iPage = onlineMemberMapper.selectPage(page, queryWrapper);
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        map.put("code", 0);
-        map.put("msg", "");
-        map.put("count", iPage.getTotal());
-        map.put("data", iPage.getRecords());
-        return map;
+        IPage<Member> iPage = onlineMemberMapper.selectMemberPage(page, memberQuery);
+        LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<String, Object>();
+        linkedHashMap.put("code", 0);
+        linkedHashMap.put("msg", "");
+        linkedHashMap.put("count", iPage.getTotal());
+        linkedHashMap.put("data", iPage.getRecords());
+        return linkedHashMap;
+//        //筛选餐厅
+//        User user = userMapper.selectById(userId);
+//        AssertUtil.isTrue(userId==null||user==null,"该用户不存在");
+//        QueryWrapper<Member> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("res_id", user.getResId());//查询该餐厅
+//        queryWrapper.eq("member_type", 0);//线上会员
+//        if (memberQuery.getOrgId() != null && !StringUtils.isBlank(memberQuery.getOrgId())) {
+//            queryWrapper.like("org_id", memberQuery.getOrgId());
+//        }
+//        if (memberQuery.getState() != null) {
+//            queryWrapper.like("state", memberQuery.getState());
+//        }
+//        if (memberQuery.getId() != null) {
+//            queryWrapper.like("id", memberQuery.getId());
+//        }
+//        if (memberQuery.getTrueName() != null && !StringUtils.isBlank(memberQuery.getTrueName())) {
+//            queryWrapper.like("true_name", memberQuery.getTrueName());
+//        }
+//        if (memberQuery.getMobile() != null && !StringUtils.isBlank(memberQuery.getMobile())) {
+//            queryWrapper.like("mobile", memberQuery.getMobile());
+//        }
+//        if (memberQuery.getNote() != null && !StringUtils.isBlank(memberQuery.getNote())) {
+//            queryWrapper.like("note", memberQuery.getNote());
+//        }
+//
+//        Page<Member> page = new Page<>(memberQuery.getPage(), memberQuery.getLimit());
+//        IPage<Member> iPage = onlineMemberMapper.selectPage(page, queryWrapper);
+//        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+//        List<Member> records = iPage.getRecords();
+//        map.put("code", 0);
+//        map.put("msg", "");
+//        map.put("count", iPage.getTotal());
+//        map.put("data", records);
+//        return map;
     }
 
     /**

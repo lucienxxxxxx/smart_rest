@@ -30,6 +30,24 @@
                         <div class="layui-input-inline mr0">
                             <input name="keyword" class="layui-input" type="text" placeholder="输入关键字"/>
                         </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label w-auto">所属机构:</label>
+                            <div class="layui-input-inline mr0">
+                                <input name="orgId" id="selectOrg" placeholder="请选择" class="layui-hide"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label w-auto">会员类型</label>
+                        <div class="layui-input-inline">
+                            <select name="memberType">
+                                <option value="">所有</option>
+                                <option value="0">线上会员</option>
+                                <option value="1">线下会员</option>
+                                <option value="2">员工</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="layui-inline">
                         <button class="layui-btn icon-btn" lay-filter="formSubSearchTbBas" lay-submit>
@@ -38,6 +56,7 @@
                         <button id="btnExportTbBas" class="layui-btn icon-btn">
                             充值
                         </button>
+
                     </div>
                 </div>
             </div>
@@ -46,7 +65,6 @@
         </div>
     </div>
 </div>
-
 <!-- 表格操作列 -->
 <script type="text/html" id="tableBarTbBas">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
@@ -94,20 +112,20 @@
             </div>
         </div>
         <div class="layui-form-item text-right model-form-footer">
-            <button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">取消</button>
-            <button class="layui-btn" lay-filter="dialogEditSubmit1" lay-submit>保存</button>
+            <button class="layui-btn" lay-filter="dialogEditSubmit1" lay-submit>充值</button>
         </div>
     </form>
 </script>
 <script>
-    layui.use(['layer', 'form', 'table', 'util', 'dropdown', 'admin'], function () {
+    layui.use(['layer', 'form', 'table', 'dropdown', 'admin','cascader', 'element',  'laytpl', 'admin', 'excel', 'upload'], function () {
         var $ = layui.jquery;
         var layer = layui.layer;
         var form = layui.form;
         var admin = layui.admin;
         var table = layui.table;
-        var util = layui.util;
         var dropdown = layui.dropdown;
+        var cascader = layui.cascader;
+        var excel = layui.excel;
 
         // 渲染表格
         var insTb = table.render({
@@ -117,10 +135,12 @@
             cellMinWidth: 100,
             cols: [[
                 {type: 'checkbox'},
-                {field: 'trueName', align: 'center', sort: true, title: '真实姓名'},
-                {field: 'mobile', align: 'center', sort: true, title: '手机号码', minWidth: 150},
+                {field: 'id', align: 'center',  title: '会员号'},
+                {field: 'trueName', align: 'center',  title: '真实姓名'},
+                {field: 'mobile', align: 'center',  title: '手机号码', minWidth: 150},
+                {field: 'orgName', align: 'center',  title: '组织'},
                 {
-                    field: 'memberType', align: 'center', sort: true, title: '类别', templet: d => {
+                    field: 'memberType', align: 'center', title: '类别', templet: d => {
                         if (d.memberType == 0) {
                             return '线上会员'
                         } else if (d.memberType == 1) {
@@ -132,7 +152,7 @@
                 },
                 {
                     field: 'virtualAcc',
-                    minWidth: 120,
+                    width: 120,
                     align: 'center',
                     sort: true,
                     title: '虚拟账户',
@@ -141,7 +161,7 @@
                     }
                 },
                 {
-                    field: 'giftAcc', minWidth: 120, align: 'center', sort: true, title: '赠送账户', templet: function (d) {
+                    field: 'giftAcc', width: 120, align: 'center', sort: true, title: '赠送账户', templet: function (d) {
                         return d.giftAcc + '元'
                     }
                 },
@@ -156,13 +176,13 @@
                     }
                 },
                 {
-                    field: 'cashAcc', minWidth: 120, align: 'center', sort: true, title: '现金账户', templet: function (d) {
+                    field: 'cashAcc', width: 120, align: 'center', sort: true, title: '现金账户', templet: function (d) {
                         return d.cashAcc + '元'
                     }
                 },
                 {
                     field: 'chargeAcc',
-                    minWidth: 120,
+                    width: 120,
                     align: 'center',
                     sort: true,
                     title: '充值账户',
@@ -171,7 +191,7 @@
                     }
                 },
                 {
-                    field: 'total', align: 'center', sort: true, title: '账号总额', templet: function (d) {
+                    field: 'total', align: 'center', width: 120, sort: true, title: '账号总额', templet: function (d) {
                         if (d.total == null) {
                             d.total = 0
                         }
@@ -180,7 +200,7 @@
                     }, totalRow: true
                 },
                 {
-                    field: 'state', align: 'center', sort: true, templet: function (d) {
+                    field: 'state', align: 'center', templet: function (d) {
                         var strs = [
                             '<span class="text-success">启用</span>',
                             '<span class="text-danger">禁用</span>'
@@ -192,24 +212,6 @@
             ]]
         });
 
-        //监听工具条
-        table.on('tool(tableTbBas)', function (obj) {
-            var data = obj.data; //获得当前行数据
-            var layEvent = obj.event; //获得 lay-event 对应的值
-
-            if (layEvent === 'edit') { // 查看
-                layer.msg('点击了修改');
-            } else if (layEvent === 'del') { // 删除
-                layer.msg('点击了删除');
-            } else if (layEvent === 'edit2') { // 修改2
-                layer.msg('点击了下拉菜单修改');
-            } else if (layEvent === 'del2') { // 删除2
-                layer.msg('点击了下拉菜单删除');
-            } else if (layEvent === 'lock2') { // 打印2
-                layer.msg('点击了下拉菜单锁定');
-            }
-            dropdown.hideAll();
-        });
 
         // 充值
         $('#btnExportTbBas').click(function () {
@@ -225,7 +227,7 @@
                 }
                 admin.open({
                     type: 1,
-                    title: '充值',
+                    title: '账号充值',
                     fixed: true,
                     offset: 'auto',
                     content: $('#dialogEditDialog1').html(),
@@ -268,6 +270,21 @@
         form.on('submit(formSubSearchTbBas)', function (data) {
             insTb.reload({where: data.field}, 'data');
         });
+
+        /**
+         * 渲染组织下拉菜单
+         */
+        $.get('${ctx}/system/org/getAllOrgList',function (orgData){
+            cascader.render({
+                elem: '#selectOrg',
+                data: orgData,
+                filterable: true,
+                changeOnSelect: true,
+                trigger: 'hover'
+            });
+        })
+
+
 
     });
 </script>

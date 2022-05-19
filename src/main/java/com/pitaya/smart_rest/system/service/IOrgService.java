@@ -2,8 +2,10 @@ package com.pitaya.smart_rest.system.service;
 
 import com.pitaya.smart_rest.system.entity.Org;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pitaya.smart_rest.system.model.OrgModel;
 import com.pitaya.smart_rest.system.query.OrgQuery;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,4 +26,6 @@ public interface IOrgService extends IService<Org> {
     void update(Org org);
 
     void del(Integer orgId);
+
+    List<OrgModel> getAllOrgList();
 }

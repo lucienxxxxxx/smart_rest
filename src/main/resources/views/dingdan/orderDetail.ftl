@@ -42,9 +42,17 @@
 </div>
 <!-- 表格操作列 -->
 <script type="text/html" id="tableBarTbAdv">
+    {{#  if(d.orderDetailState === 0){ }}
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="refund">退款</a>
-    <#--    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>-->
-    <#--    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+    {{#  } }}
+    {{#  if(d.orderDetailState === 1){ }}
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="refund">退款</a>
+    {{#  } }}
+    {{#  if(d.orderDetailState === 2){ }}
+    —
+    {{#  } }}
+
+
 </script>
 
 <#--退款弹窗框-->
@@ -84,23 +92,61 @@
             totalRow: true,//开启合计行
             cols: [[
                 {fixed: 'left', field: 'foodName', align: 'center', sort: true, title: '食物名称'},
-                {field: 'createTime', sort: true, align: 'center', title: '创建时间'},
-                {field: 'weight', align: 'center', sort: true, title: '重量', templet: function (d) {return d.weight + '克'}, totalRowText: '合计：'},
-                {field: 'virtualAcc', align: 'center', sort: true, title: '虚拟账户', templet: function (d) {return d.virtualAcc + '元'}, totalRow: true},
-                {field: 'giftAcc', align: 'center', sort: true, title: '赠送账户', templet: function (d) {return d.giftAcc + '元'}, totalRow: true},
-                {field: 'allowanceAcc', align: 'center', sort: true, title: '补贴账户', templet: function (d) {return d.allowanceAcc + '元'}, totalRow: true},
-                {field: 'cashAcc', align: 'center', sort: true, title: '现金账户', templet: function (d) {return d.cashAcc + '元'}, totalRow: true},
-                {field: 'chargeAcc', align: 'center', sort: true, title: '充值账户', templet: function (d) {return d.chargeAcc + '元'}, totalRow: true},
-                {field: 'total', align: 'center', sort: true, title: '消费总额', templet: function (d) {
-                        var str = '<span style="font-weight: bold">'+d.total +'元</span>'
-                    return str}, totalRow: true},
-                {field: 'refundTotal', align: 'center', sort: true, title: '退款总额', templet: function (d) {if (d.refundTotal==null){return '0元'}return d.refundTotal + '元'}, totalRow: true},
-                {field: 'state', title: '状态', templet: function (d) {
+                {field: 'createDate', align: 'center', title: '创建时间'},
+                {
+                    field: 'weight', align: 'center', title: '重量', templet: function (d) {
+                        return d.weight + '克'
+                    }, totalRowText: '合计：'
+                },
+                {
+                    field: 'virtualAcc', align: 'center', title: '虚拟账户', templet: function (d) {
+                        return d.virtualAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'giftAcc', align: 'center', title: '赠送账户', templet: function (d) {
+                        return d.giftAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'allowanceAcc', align: 'center', title: '补贴账户', templet: function (d) {
+                        return d.allowanceAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'cashAcc', align: 'center', title: '现金账户', templet: function (d) {
+                        return d.cashAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'chargeAcc', align: 'center', title: '充值账户', templet: function (d) {
+                        return d.chargeAcc + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'total', align: 'center', title: '消费总额', templet: function (d) {
+                        var str = '<span style="font-weight: bold">' + d.total + '元</span>'
+                        return str
+                    }, totalRow: true
+                },
+                {
+                    field: 'refundTotal', align: 'center', title: '退款总额', templet: function (d) {
+                        if (d.refundTotal == null) {
+                            return '0元'
+                        }
+                        return d.refundTotal + '元'
+                    }, totalRow: true
+                },
+                {
+                    field: 'orderDetailState', align: 'center', title: '状态', templet: function (d) {
                         var strs = [
                             '<span style="color: #189700">子订单完成</span>',
                             '<span style="color: #af0000">请求退款</span>',
                             '<span style="color: #0e2fe5">退款成功</span>'
-                        ];return strs[d.orderDetailState];}, title: '状态'},
+                        ];
+                        return strs[d.orderDetailState];
+                    }, title: '状态'
+                },
                 {fixed: 'right', align: 'center', toolbar: '#tableBarTbAdv', title: '操作', minWidth: 50}
             ]]
         });
@@ -115,7 +161,7 @@
                 layer.close(i);
                 layer.load(2);
                 $.post('${ctx}/dingdan/orderDetail/allRefund', {
-                    orderId:"${orderId}"
+                    orderId: "${orderId}"
                 }, function (res) {
                     layer.closeAll('loading');
                     if (res.code == 200) {
@@ -156,6 +202,13 @@
                     var url = '${ctx}/dingdan/orderDetail/refund';
                     // 表单提交事件
                     form.on('submit(submitRefund)', function (data) {
+                        if (orderDetail.orderDetailState == 2) {
+                            layer.open({
+                                title: '退款失败'
+                                , content: '不能重复退款'
+                            });
+                            return false;
+                        }
                         //计算子订单总金额
                         var orderMoney = orderDetail.virtualAcc + orderDetail.giftAcc + orderDetail.allowanceAcc + orderDetail.cashAcc + orderDetail.chargeAcc
                         if (data.field.refundMoney > orderMoney) {
@@ -187,7 +240,6 @@
                 }
             });
         }
-
 
 
     });

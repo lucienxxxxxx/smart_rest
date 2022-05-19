@@ -23,6 +23,6 @@ public class ChargeModel {
     private Float chargeAcc;
     private Integer state;
     private Float total;
-
+    private String orgName="无组织";
 
 }

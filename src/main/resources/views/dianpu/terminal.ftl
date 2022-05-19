@@ -121,17 +121,17 @@
                                 <input name="dangkouId" class="layui-input" type="text" placeholder="请输入档口ID"/>
                             </div>
                         </div>
-                        <div class="layui-inline" >
-                            <label class="layui-form-label w-auto">标签</label>
-                            <div class="layui-input-inline mr0">
-                                <select name="tagId" lay-verType="tips" >
-                                    <option value="">请选择标签</option>
-                                    <#list tagList as tag>
-                                        <option value="${tag.id}">${tag.tagName}</option>
-                                    </#list>
-                                </select>
-                            </div>
-                        </div>
+<#--                        <div class="layui-inline" >-->
+<#--                            <label class="layui-form-label">标签</label>-->
+<#--                            <div class="layui-input-inline">-->
+<#--                                <select name="tagId" lay-verType="tips" >-->
+<#--                                    <option value="">请选择标签</option>-->
+<#--                                    <#list tagList as tag>-->
+<#--                                        <option value="${tag.id}">${tag.tagName}</option>-->
+<#--                                    </#list>-->
+<#--                                </select>-->
+<#--                            </div>-->
+<#--                        </div>-->
                         <div class="layui-inline" style="padding-right: 110px;">
                             <button class="layui-btn icon-btn" lay-filter="formSubSearchFood" lay-submit>
                                 <i class="layui-icon">&#xe615;</i>搜索
@@ -171,20 +171,26 @@
             page: true,
             cellMinWidth: 100,
             cols: [[
-                {field: 'terminalName', align: 'center', sort: true, title: '终端名'},
-                {field: 'descriptions', align: 'center', sort: true, title: '备注'},
-                {field: 'foodName', align: 'center', sort: true, title: '当前食物'},
+                {field: 'terminalName', align: 'center',  title: '终端名'},
+                {field: 'descriptions', align: 'center',  title: '备注'},
+                {field: 'foodName', align: 'center',  title: '当前食物',templet:function (d){
+                    if (d.foodName){
+                        return d.foodName;
+                    }else {
+                        return "-";
+                    }
+                    }},
                 {
-                    field: 'type', align: 'center', sort: true, templet: function (d) {
+                    field: 'type', align: 'center',  templet: function (d) {
                         var strs = [
-                            '<span>绑定机</span>',
-                            '<span>取餐机</span>'
+                            '<span style="color: #002aff">绑定机</span>',
+                            '<span style="color: #ff6600">取餐机</span>'
                         ];
                         return strs[d.type];
                     }, title: '类型'
                 },
-                {field: 'state', title: '状态', templet:'#terminalTbState', sort: true, width: 100},
-                {field: 'settingDate', align: 'center', sort: true, title: '设置时间'},
+                {field: 'state', title: '状态', templet:'#terminalTbState', align: 'center', width: 100},
+                {field: 'settingDate', align: 'center',  title: '设置时间'},
                 {align: 'center', toolbar: '#tableBarTbBas', title: '操作', minWidth: 220}
             ]]
         });
@@ -218,12 +224,16 @@
             } else if (layEvent === 'del') { // 删除
                 doDel(data.id,data.terminalName);
             }else if (layEvent === 'setFood') { // 设置当前食物
-                setFood(data.id);
+                setFood(data.id,data.type);
             }
         });
 
         //设置食物
-        function setFood(terminalId) {
+        function setFood(terminalId,type) {
+            if (type == 0){
+                layer.msg("绑定机不能设置食物", {icon: 2});
+                return;
+            }
             admin.open({
                 type: 1,
                 area: '1050px',
@@ -239,22 +249,22 @@
                         page: true,
                         cellMinWidth: 100,
                         cols: [[
-                            {fixed: 'left', field: 'name', sort: true, title: '名称'},
-                            {field: 'price', sort: true, title: '价格'},
-                            {field: 'discount', sort: true, title: '折扣'},
-                            {field: 'priceMethod', sort: true, title: '计价方式'},
+                            {fixed: 'left', field: 'name', align: 'center', title: '名称'},
+                            {field: 'price', align: 'center',sort: true, title: '价格'},
+                            {field: 'discount',align: 'center', sort: true, title: '折扣'},
+                            {field: 'priceMethod',align: 'center', sort: true, title: '计价方式'},
                             {
-                                field: 'tagName', sort: true, title: '标签', templet: function (d) {
+                                field: 'tagName', align: 'center', title: '标签', templet: function (d) {
                                     return '<span class="layui-badge-rim">' + d.tagName + '</span>';
                                 }
                             },
-                            {field: 'heat', sort: true, title: '热量'},
-                            {field: 'protein', sort: true, title: '蛋白质'},
-                            {field: 'fat', sort: true, title: '脂肪'},
-                            {field: 'cellulose', sort: true, title: '纤维素'},
-                            {field: 'carbohydrate', sort: true, title: '碳水化合物'},
-                            {field: 'descriptions', sort: true, title: '描述'},
-                            {field: 'dangkouId', sort: true, title: '档口ID'},
+                            {field: 'heat', align: 'center',sort: true, title: '热量'},
+                            {field: 'protein', align: 'center',sort: true, title: '蛋白质'},
+                            {field: 'fat', align: 'center',sort: true, title: '脂肪'},
+                            {field: 'cellulose',align: 'center', sort: true, title: '纤维素'},
+                            {field: 'carbohydrate', align: 'center',sort: true, title: '碳水化合物'},
+                            {field: 'descriptions',align: 'center', sort: true, title: '描述'},
+                            {field: 'dangkouId',align: 'center', sort: true, title: '档口ID'},
                             {fixed: 'right', align: 'center', toolbar: '#tableBarFood', title: '操作', minWidth: 100}
                         ]]
                     });

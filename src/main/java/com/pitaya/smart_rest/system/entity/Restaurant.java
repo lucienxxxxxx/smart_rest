@@ -31,6 +31,7 @@ public class Restaurant implements Serializable {
     private static final long serialVersionUID = 1L;
     @TableId(value="id" , type = IdType.AUTO)
     private Integer id;
+
     private String restaurantName;
 
     /**
@@ -68,4 +69,5 @@ public class Restaurant implements Serializable {
     @JsonFormat(pattern = "HH:mm:ss", timezone = "GMT+8")
     private Time dinnerEnd;
 
+    private Integer tpUpdate;
 }

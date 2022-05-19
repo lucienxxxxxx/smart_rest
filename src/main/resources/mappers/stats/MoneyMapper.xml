@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.stats.mapper.MoneyMapper">
+    <select id="selectModelPage" resultType="com.pitaya.smart_rest.stats.entity.Money"
+            parameterType="com.pitaya.smart_rest.stats.query.MoneyQuery">
+        SELECT
+            date,
+            sum( charge_virtual_acc ) charge_virtual_acc,
+            sum( charge_gift_acc ) charge_gift_acc,
+            sum( charge_allowance_acc ) charge_allowance_acc,
+            sum( charge_cash_acc ) charge_cash_acc,
+            sum( charge_charge_acc ) charge_charge_acc,
+            sum( charge_total ) charge_total,
+            sum( withdrawal_total ) withdrawal_total,
+            sum( refund_virtual_acc ) refund_virtual_acc,
+            sum( refund_gift_acc ) refund_gift_acc,
+            sum( refund_allowance_acc ) refund_allowance_acc,
+            sum( refund_cash_acc ) refund_cash_acc,
+            sum( refund_charge_acc ) refund_charge_acc,
+            sum( refund_total ) refund_total,
+            sum( order_total ) order_total
+        FROM
+            (
+            SELECT
+            date_format( c.create_date, '%Y-%m-%d' ) AS date,
+            sum( c.virtual_acc ) charge_virtual_acc,
+            sum( c.gift_acc ) charge_gift_acc,
+            sum( c.allowance_acc ) charge_allowance_acc,
+            sum( c.cash_acc ) charge_cash_acc,
+            sum( c.charge_acc ) charge_charge_acc,
+            sum( c.virtual_acc + c.gift_acc + c.allowance_acc + c.cash_acc + c.charge_acc ) charge_total,
+            0 withdrawal_total,
+            0 refund_virtual_acc,
+            0 refund_gift_acc,
+            0 refund_allowance_acc,
+            0 refund_cash_acc,
+            0 refund_charge_acc,
+            0 refund_total,
+            0 order_total
+            FROM
+            t_charge c
+            GROUP BY
+            date UNION ALL
+            SELECT
+            date_format( w.create_date, '%Y-%m-%d' ) AS date,
+            0 charge_virtual_acc,
+            0 charge_gift_acc,
+            0 charge_allowance_acc,
+            0 charge_cash_acc,
+            0 charge_charge_acc,
+            0 charge_total,
+            sum( w.cash_amount ) withdrawal_total,
+            0 refund_virtual_acc,
+            0 refund_gift_acc,
+            0 refund_allowance_acc,
+            0 refund_cash_acc,
+            0 refund_charge_acc,
+            0 refund_total,
+            0 order_total
+            FROM
+            t_withdrawal w
+            GROUP BY
+            date UNION ALL
+            SELECT
+            date_format( r.create_date, '%Y-%m-%d' ) AS date,
+            0 charge_virtual_acc,
+            0 charge_gift_acc,
+            0 charge_allowance_acc,
+            0 charge_cash_acc,
+            0 charge_charge_acc,
+            0 charge_acc,
+            0 withdrawal_total,
+            sum( r.virtual_acc ) refund_virtual_acc,
+            sum( r.gift_acc ) refund_gift_acc,
+            sum( r.allowance_acc ) refund_allowance_acc,
+            sum( r.cash_acc ) refund_cash_acc,
+            sum( r.charge_acc ) refund_charge_acc,
+            SUM( r.virtual_acc + r.gift_acc + r.allowance_acc + r.cash_acc + r.charge_acc ) refund_total,
+            0 order_total
+            FROM
+            t_refund r
+            GROUP BY
+            date UNION ALL
+            SELECT
+            date_format( o.order_date, '%Y-%m-%d' ) AS date,
+            0 charge_virtual_acc,
+            0 charge_gift_acc,
+            0 charge_allowance_acc,
+            0 charge_cash_acc,
+            0 charge_charge_acc,
+            0 charge_total,
+            0 withdrawal_total,
+            0 refund_virtual_acc,
+            0 refund_gift_acc,
+            0 refund_allowance_acc,
+            0 refund_cash_acc,
+            0 refund_charge_acc,
+            0 refund_total,
+            (
+            sum( od.virtual_acc ) + sum( od.gift_acc ) + sum( od.allowance_acc ) + sum( od.cash_acc ) + sum( od.charge_acc )
+            ) AS order_total
+            FROM
+            t_order o
+            JOIN t_order_detail od ON od.order_id = o.id
+            GROUP BY
+            date
+            ) money_table
+        <where>
+            date =date
+            <if test="query.startDateTime != null and query.startDateTime!='' ">
+                AND date &gt;= #{query.startDateTime}
+            </if>
+            <if test="query.endDateTime != null and query.endDateTime!='' ">
+                AND date &lt;= #{query.endDateTime}
+            </if>
+        </where>
+        GROUP BY
+            date
+        ORDER BY
+            date DESC
+    </select>
+
+</mapper>

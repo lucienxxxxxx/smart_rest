@@ -21,7 +21,7 @@
             <div class="layui-form toolbar">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label w-auto">会员号:</label>
+                        <label class="layui-form-label w-auto">&emsp;会员号:</label>
                         <div class="layui-input-inline mr0">
                             <input name="id" class="layui-input" type="text" placeholder="请输入会员号"/>
                         </div>
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label w-auto">手机号:</label>
+                        <label class="layui-form-label w-auto">&emsp;手机号:</label>
                         <div class="layui-input-inline mr0">
                             <input name="mobile" class="layui-input" type="text" placeholder="请输入手机号"/>
                         </div>
@@ -45,14 +45,14 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label w-auto">描&emsp;述:</label>
+                        <label class="layui-form-label w-auto">描&emsp;&emsp;述:</label>
                         <div class="layui-input-inline mr0">
                             <input name="note" class="layui-input" type="text" placeholder="请输入描述"/>
                         </div>
                     </div>
                     <div class="layui-inline ">
-                        <label class="layui-form-label">状&emsp;态：</label>
-                        <div class="layui-input-inline">
+                        <label class="layui-form-label w-auto">状&emsp;&emsp;态:</label>
+                        <div class="layui-input-inline mr0">
                             <select name="state">
                                 <option value="">所有</option>
                                 <option value="0">启用</option>
@@ -61,12 +61,19 @@
                             </select>
                         </div>
                     </div>
-                    <div class="layui-inline" style="padding-right: 110px;">
+                    <div class="layui-inline">
+                        <label class="layui-form-label w-auto">所属机构:</label>
+                        <div class="layui-input-inline mr0">
+                            <input name="orgId" id="selectOrg" placeholder="请选择" class="layui-hide"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline w-auto" style="padding-right: 110px;">
                         <button class="layui-btn icon-btn" lay-filter="formSubSearchUser" lay-submit>
                             <i class="layui-icon">&#xe615;</i>搜索
                         </button>
                         <button id="btnAddUser" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>添加</button>
-                        <button id="btnAddInfo" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>信息完善</button>
+                        <button id="btnAddBatch" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>导入添加</button>
+                        <button id="memberCharge" type="button" class="layui-btn">批量充值</button>
                     </div>
                 </div>
             </div>
@@ -106,13 +113,6 @@
     <form id="modelUserForm" lay-filter="modelUserForm" class="layui-form model-form">
         <#-- 用户ID -->
         <input name="id" type="hidden" />
-<#--        <div class="layui-form-item">-->
-<#--            <label class="layui-form-label layui-form-required">会员号</label>-->
-<#--            <div class="layui-input-block">-->
-<#--                <input name="id" placeholder="请输入会员号" type="text" class="layui-input" maxlength="20"-->
-<#--                       lay-verType="tips" lay-verify="required" required/>-->
-<#--            </div>-->
-<#--        </div>-->
         <div class="layui-form-item">
             <label class="layui-form-label layui-form-required">逻辑卡号</label>
             <div class="layui-input-block">
@@ -141,6 +141,13 @@
                 />
             </div>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label ">机构编号</label>
+            <div class="layui-input-block">
+                <input name="orgId" placeholder="请输入机构编号" type="text" class="layui-input" maxlength="20"
+                />
+            </div>
+        </div>
 
         <div class="layui-form-item text-right">
             <button class="layui-btn layui-btn-primary" type="button" ew-event="closePageDialog">取消</button>
@@ -151,13 +158,13 @@
 
 <!-- js部分 -->
 <script>
-    layui.use(['layer', 'form', 'table', 'util', 'admin', 'formSelects', "xmSelect"], function () {
+    layui.use(['layer', 'form','cascader', 'table', 'util', 'admin', 'formSelects', "xmSelect"], function () {
         var $ = layui.jquery;
         var layer = layui.layer;
         var form = layui.form;
         var table = layui.table;
         var admin = layui.admin;
-
+        var cascader = layui.cascader;
 
         /**
          * ----------------------------------------渲染表格---------------------------------
@@ -169,17 +176,18 @@
             toolbar: true,
             cellMinWidth: 100,
             cols: [[
-                {fixed: 'left',field: 'id', sort: true, title: '会员号'},
-                {field: 'logicName', sort: true, title: '逻辑卡号'},
-                {field: 'mobile', sort: true, title: '手机号',minWidth: 150},
-                {field: 'trueName', sort: true, title: '真实姓名'},
-                {field: 'virtualAcc', minWidth: 120,align: 'center', sort: true, title: '虚拟账户',templet:function (d) {return d.virtualAcc+'元'} , totalRow: true},
-                {field: 'giftAcc',minWidth: 120, align: 'center', sort: true, title: '赠送账户',templet:function (d) {return d.giftAcc+'元'} , totalRow: true},
-                {field: 'allowanceAcc', minWidth: 120,align: 'center', sort: true, title: '补贴账户', templet:function (d) {return d.allowanceAcc+'元'} ,totalRow: true},
-                {field: 'cashAcc',minWidth: 120, align: 'center', sort: true, title: '现金账户',templet:function (d) {return d.cashAcc+'元'} ,totalRow: true},
-                {field: 'chargeAcc', minWidth: 120,align: 'center', sort: true, title: '充值账户',templet:function (d) {return d.chargeAcc+'元'} , totalRow: true},
-                {field: 'note', sort: true, title: '备注'},
-                {field: 'createDate', sort: true, title: '创建时间',minWidth: 210},
+                {fixed: 'left',align: 'center', field: 'id',  title: '会员号'},
+                {field: 'orgName',align: 'center', title: '组织'},
+                {field: 'logicName',align: 'center',   title: '逻辑卡号'},
+                {field: 'mobile',align: 'center',   title: '手机号',width: 150},
+                {field: 'trueName',align: 'center',   title: '真实姓名'},
+                {field: 'virtualAcc', width: 120,align: 'center', sort: true, title: '虚拟账户',templet:function (d) {return d.virtualAcc+'元'} , totalRow: true},
+                {field: 'giftAcc',width: 120, align: 'center', sort: true, title: '赠送账户',templet:function (d) {return d.giftAcc+'元'} , totalRow: true},
+                {field: 'allowanceAcc', width: 120,align: 'center', sort: true, title: '补贴账户', templet:function (d) {return d.allowanceAcc+'元'} ,totalRow: true},
+                {field: 'cashAcc',width: 120, align: 'center', sort: true, title: '现金账户',templet:function (d) {return d.cashAcc+'元'} ,totalRow: true},
+                {field: 'chargeAcc', width: 120,align: 'center', sort: true, title: '充值账户',templet:function (d) {return d.chargeAcc+'元'} , totalRow: true},
+                {field: 'note', align: 'center',  title: '备注'},
+                {field: 'createDate', align: 'center', sort: true, title: '创建时间',minWidth: 210},
                 {
                     field: 'state', title: '状态', templet: function (d) {
                         var strs = [
@@ -204,11 +212,27 @@
             //添加就直接弹窗
             showEditModel();
         });
-        // 添加
-        $('#btnAddInfo').click(function () {
-            //添加就直接弹窗
-            // showEditModel();
+
+        // 导入添加
+        $('#btnAddBatch').click(function () {
+            layer.open({
+                type: 2,
+                title: "导入添加",
+                area: ['800px', '500px'],
+                content: '${ctx}/guke/offlineMember/toAddBatch' //打开模板页面
+            });
         });
+
+        //批量充值
+        $('#memberCharge').click(function () {
+            layer.open({
+                type: 2,
+                title: "批量充值",
+                area: ['800px', '500px'],
+                content: '${ctx}/guke/offlineMember/toChargeBatch'
+            });
+        });
+
         // 搜索
         form.on('submit(formSubSearchUser)', function (data) {
             insTb.reload({where: data.field}, 'data');
@@ -246,6 +270,7 @@
                 success: function (layero, dIndex) {
                     $(layero).children('.layui-layer-content').css('overflow', 'visible');
                     var url = '${ctx}/guke/offlineMember/switchStatus';
+
                     // 回显数据
                     form.val('editStatusFrom', null);
                     // 表单提交事件
@@ -328,6 +353,21 @@
                 }, 'json');
             });
         }
+
+        /**
+         * 渲染组织下拉菜单
+         */
+        $.get('${ctx}/system/org/getAllOrgList',function (orgData){
+            cascader.render({
+                elem: '#selectOrg',
+                data: orgData,
+                filterable: true,
+                changeOnSelect: true,
+                trigger: 'hover'
+            });
+        })
+
+
     });
 </script>
 

@@ -1,20 +1,23 @@
 package com.pitaya.smart_rest.guke.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.pitaya.smart_rest.activity.service.impl.ChargeServiceImpl;
 import com.pitaya.smart_rest.base.BaseController;
 import com.pitaya.smart_rest.base.ResultInfo;
 import com.pitaya.smart_rest.dianpu.entity.RfidUser;
 import com.pitaya.smart_rest.guke.entity.Member;
 import com.pitaya.smart_rest.guke.query.MemberQuery;
 import com.pitaya.smart_rest.guke.service.impl.OfflineMemberServiceImpl;
+import com.pitaya.smart_rest.utils.AssertUtil;
 import com.pitaya.smart_rest.utils.LoginUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,12 +33,52 @@ public class OfflineMemberController extends BaseController {
 
     @Autowired
     private OfflineMemberServiceImpl memberService;
+    @Autowired
+    private ChargeServiceImpl chargeService;
 
     @RequestMapping("index")
     public String index(){
         return "guke/offline/member";
     }
 
+
+    /**
+     * 打开导入excel批量添加页面
+     * @return
+     */
+    @RequestMapping("toAddBatch")
+    public String addBatch(){
+        return "guke/offline/addBatch";
+    }
+
+    /**
+     * 打开导入excel批量充值页面
+     * @return
+     */
+    @RequestMapping("toChargeBatch")
+    public String toChargeBatch(){
+        return "guke/offline/chargeBatch";
+    }
+    /**
+     * 导入excel批量添加
+     * @return
+     */
+    @PostMapping("addBatch")
+    @ResponseBody
+    public ResultInfo addBatchByExcel(@RequestBody JSONArray list,HttpServletRequest request){
+        Integer userId = LoginUserUtil.releaseUserIdFromCookie(request);
+        List<Map<String, Object>> resultList=memberService.addBatch(list,userId);
+        if (resultList.isEmpty()){
+            return success("成功",resultList);
+        }else {
+            ResultInfo resultInfo = new ResultInfo();
+            resultInfo.setCode(300);
+            resultInfo.setMsg("数据有误，请检查");
+            resultInfo.setResult(resultList);
+            return resultInfo;
+        }
+
+    }
 
     /**
      * 分页-条件查询
@@ -93,5 +136,22 @@ public class OfflineMemberController extends BaseController {
     public ResultInfo del(Integer id) {
         memberService.del(id);
         return success("删除成功");
+    }
+
+    @PostMapping("chargeByExcel")
+    @ResponseBody
+    public ResultInfo chargeByExcel(@RequestBody JSONArray list,HttpServletRequest request){
+        Integer userId = LoginUserUtil.releaseUserIdFromCookie(request);
+        List<Map<String, Object>> resultList=memberService.chargeByExcel(list,userId);
+        if (resultList.isEmpty()){
+            return success("成功",resultList);
+        }else {
+            ResultInfo resultInfo = new ResultInfo();
+            resultInfo.setCode(300);
+            resultInfo.setMsg("数据有误，请检查");
+            resultInfo.setResult(resultList);
+            return resultInfo;
+        }
+
     }
 }

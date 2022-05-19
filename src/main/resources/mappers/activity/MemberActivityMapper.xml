@@ -9,6 +9,7 @@
                ma.is_use,
                ma.use_date,
                m.mobile,
+               m.org_id,
                ca.note,
                m.true_name,
                ca.activity_name
@@ -23,6 +24,7 @@
             <if test="query.isUse != null ">
                 AND ma.is_use LIKE CONCAT('%',#{query.isUse},'%')
             </if>
+
             <if test="query.mobile != null and query.mobile!=''">
                 AND m.mobile LIKE CONCAT('%',#{query.mobile},'%')
             </if>

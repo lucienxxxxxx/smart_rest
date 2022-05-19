@@ -35,6 +35,15 @@ public class OnlineMemberController extends BaseController {
         return "guke/online/member";
     }
 
+    @RequestMapping("addInfo")
+    public String addInfo(){
+        return "guke/online/addInfo";
+    }
+
+    @RequestMapping("memberChargeBatch")
+    public String memberChargeBatch(){
+        return "guke/online/memberChargeBatch";
+    }
     /**
      * 分页-条件查询
      * @param request

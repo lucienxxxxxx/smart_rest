@@ -21,4 +21,5 @@ public class StaffQuery extends BaseQuery {
     private Integer state;
     private String note;
 
+    private String orgId;
 }

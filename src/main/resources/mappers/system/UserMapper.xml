@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.pitaya.smart_rest.system.mapper.UserMapper">
-
+<select id="selectUserModelPage" parameterType="com.pitaya.smart_rest.system.query.UserQuery" resultType="com.pitaya.smart_rest.system.model.UserListModel">
+    SELECT
+        u.id,
+        u.user_name,
+        u.true_name,
+        u.phone,
+        u.email,
+        u.create_date,
+        u.login_date,
+        u.state,
+        u.descriptions,
+        r.restaurant_name,
+        GROUP_CONCAT( ro.role_name ) as roles
+    FROM
+        t_user u
+            JOIN t_restaurant r ON u.res_id = r.id
+            LEFT JOIN t_user_role ur ON ur.user_id = u.id
+            LEFT JOIN t_role ro ON ro.id = ur.role_id
+    <where>
+        u.is_valid = 1
+        <if test="userQuery.userName != null and userQuery.userName!=''">
+            AND u.user_name LIKE CONCAT('%',#{userQuery.userName},'%')
+        </if>
+        <if test="userQuery.trueName != null and userQuery.trueName!=''">
+            AND u.true_name LIKE CONCAT('%',#{userQuery.trueName},'%')
+        </if>
+        <if test="userQuery.phone != null and userQuery.phone!=''">
+            AND u.phone LIKE CONCAT('%',#{userQuery.phone},'%')
+        </if>
+        <if test="userQuery.state != null and userQuery.state!=''">
+            AND u.state LIKE CONCAT('%',#{userQuery.state},'%')
+        </if>
+        <if test="userQuery.resId != null and userQuery.resId!=''">
+            AND r.id LIKE CONCAT('%',#{userQuery.resId},'%')
+        </if>
+        <if test="userQuery.roleId != null and userQuery.roleId!=''">
+            AND ro.id LIKE CONCAT('%',#{userQuery.roleId},'%')
+        </if>
+    </where>
+    GROUP BY
+        u.id
+</select>
 </mapper>

@@ -23,7 +23,7 @@
                     <div class="layui-inline ">
                         <label class="layui-form-label">状&emsp;&emsp;态：</label>
                         <div class="layui-input-inline">
-                            <select name="state">
+                            <select name="isUse">
                                 <option value="">所有</option>
                                 <option value="1">已核销</option>
                                 <option value="0">待核销</option>
@@ -67,7 +67,14 @@
 
 <!-- 表格操作列 -->
 <script type="text/html" id="tableBarUser">
+    {{#  if(d.isUse === 0){ }}
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="verify">核销</a>
+    {{#  } }}
+    {{#  if(d.isUse === 1){ }}
+    —
+    {{#  } }}
+
+
 </script>
 
 <!-- js部分 -->
@@ -90,31 +97,23 @@
             cellMinWidth: 100,
             cols: [[
                 {type: 'numbers'},
-                {field: 'memberId', sort: true, title: '会员号'},
-                {field: 'mobile', sort: true, title: '手机号码'},
-                {field: 'trueName', sort: true, title: '真实姓名'},
-                {field: 'note', sort: true, title: '活动礼品'},
-                {field: 'activityName', sort: true, title: '活动名称'},
-                {
-                    field: 'useDate', sort: true, title: '核销时间', templet: d => {
-                        if (d.useDate == null) {
+                {field: 'memberId', align: 'center', title: '会员号'},
+                {field: 'mobile', align: 'center',title: '手机号码'},
+                {field: 'trueName', align: 'center', title: '真实姓名'},
+                {field: 'note', align: 'center', title: '活动礼品'},
+                {field: 'activityName', align: 'center', title: '活动名称'},
+                {field: 'useDate', align: 'center', title: '核销时间', templet: d => {
+                    if (d.useDate == null) {
                             return '未核销'
                         } else {
-                            return d.useDate
-                        }
-                    }
-                },
-                {
-                    field: 'isUse', sort: true, title: '活动礼品', templet: d => {
-
+                            return d.useDate}}},
+                {field: 'isUse',align: 'center',  title: '是否核销', templet: d => {
                         if (d.isUse == 0) {
                             return '<span style="color: #1d6abf">待核销</span>'
                         } else {
                             return '<span style="color: #00B83F">已核销</span>'
-                        }
-                    }
-                },
-                {fixed: 'right', align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: 70}
+                        }}},
+                {fixed: 'right', align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: '40'}
             ]]
         });
 

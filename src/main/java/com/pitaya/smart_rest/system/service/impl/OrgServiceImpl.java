@@ -3,6 +3,7 @@ package com.pitaya.smart_rest.system.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.pitaya.smart_rest.system.entity.Org;
 import com.pitaya.smart_rest.system.mapper.OrgMapper;
+import com.pitaya.smart_rest.system.model.OrgModel;
 import com.pitaya.smart_rest.system.query.OrgQuery;
 import com.pitaya.smart_rest.system.service.IOrgService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,10 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -30,6 +28,50 @@ import java.util.Map;
 public class OrgServiceImpl extends ServiceImpl<OrgMapper, Org> implements IOrgService {
     @Resource
     private OrgMapper orgMapper;
+
+    /**
+     * 获取组织列表（渲染前端搜索下拉框使用）
+     * @return
+     */
+    @Override
+    public List<OrgModel> getAllOrgList() {
+        //所有组织列表
+        List<Org> orgList = orgMapper.selectList(null);
+        List<OrgModel> result=new ArrayList<>();
+        //查找出所有父类列表
+        orgList.forEach(org -> {
+            if (org.getParentId()==-1){
+                OrgModel orgModel = new OrgModel();
+                orgModel.setValue(org.getId());
+                orgModel.setLabel(org.getOrgName());
+                result.add(orgModel);
+            }
+        });
+        result.forEach(r->{
+            r.setChildren(getChild(r.getValue(), orgList));
+        });
+        return result;
+    }
+
+    private List<OrgModel> getChild(Integer pid,List<Org> orgList) {
+        List<OrgModel> childOrg = new ArrayList<>();
+        orgList.forEach(org -> {
+            if (pid==org.getParentId()){
+                OrgModel orgModel = new OrgModel();
+                orgModel.setValue(org.getId());
+                orgModel.setLabel(org.getOrgName());
+                childOrg.add(orgModel);
+            }
+        });
+        childOrg.forEach(c->{
+            c.setChildren(getChild(c.getValue(),orgList));
+        });
+        if (childOrg.size()==0){
+            return null;
+        }
+        return childOrg;
+    }
+
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)

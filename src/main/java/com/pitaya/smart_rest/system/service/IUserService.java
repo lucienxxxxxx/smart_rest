@@ -38,4 +38,6 @@ public interface IUserService extends IService<User> {
     void resetPwd(Integer userId);
 
     void updatePassWord(Integer userId, String oldPassword, String newPassword, String repeatPassword);
+
+    void switchStatus(Integer id, Integer state);
 }

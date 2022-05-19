@@ -185,15 +185,15 @@
             toolbar: true,
             cellMinWidth: 100,
             cols: [[
-                {fixed: 'left', field: 'name', sort: true, title: '名称'},
+                {fixed: 'left', field: 'name', align: 'center', title: '名称'},
                 {
-                    field: 'price', sort: true, title: '价格', templet: function (d) {
+                    field: 'price', align: 'center',sort: true, title: '价格', templet: function (d) {
                         return d.price + '元';
                     }
                 },
-                {field: 'discount', sort: true, title: '折扣'},
+                {field: 'discount',align: 'center', sort: true, title: '折扣'},
                 {
-                    field: 'priceMethod', sort: true, title: '计价方式', templet: function (d) {
+                    field: 'priceMethod', align: 'center', title: '计价方式', templet: function (d) {
                         if (d.priceMethod == 0) {
                             return '克';
                         } else {
@@ -203,17 +203,17 @@
                     }
                 },
                 {
-                    field: 'tagName', sort: true, title: '标签', templet: function (d) {
+                    field: 'tagName',align: 'center', sort: true, title: '标签', templet: function (d) {
                         return '<span class="layui-badge-rim">' + d.tagName + '</span>';
                     }
                 },
-                {field: 'heat', sort: true, title: '热量'},
-                {field: 'protein', sort: true, title: '蛋白质'},
-                {field: 'fat', sort: true, title: '脂肪'},
-                {field: 'cellulose', sort: true, title: '纤维素'},
-                {field: 'carbohydrate', sort: true, title: '碳水化合物'},
-                {field: 'descriptions', sort: true, title: '描述'},
-                {field: 'dangkouId', sort: true, title: '档口ID'},
+                {field: 'heat',align: 'center', sort: true, title: '热量'},
+                {field: 'protein',align: 'center', sort: true, title: '蛋白质'},
+                {field: 'fat', align: 'center',sort: true, title: '脂肪'},
+                {field: 'cellulose',align: 'center', sort: true, title: '纤维素'},
+                {field: 'carbohydrate',align: 'center', sort: true, title: '碳水化合物'},
+                {field: 'descriptions', align: 'center', title: '描述'},
+                {field: 'dangkouId', align: 'center',sort: true, title: '档口ID'},
                 {fixed: 'right', align: 'center', toolbar: '#tableBarUser', title: '操作', minWidth: 150}
             ]]
         });

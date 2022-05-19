@@ -21,7 +21,8 @@ layui.config({
     introJs: 'introJs/introJs',
     jquery_cookie:'jquery-cookie/jquery.cookie',
     formSelects:"formSelects/formSelects-v4",
-    xmSelect:"xm-select/xm-select"
+    xmSelect:"xm-select/xm-select",
+    excel: 'layui_exts/excel'
 }).use(['layer', 'admin'], function () {
     var $ = layui.jquery;
     var layer = layui.layer;

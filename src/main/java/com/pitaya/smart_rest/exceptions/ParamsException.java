@@ -29,6 +29,7 @@ public class ParamsException extends RuntimeException {
         this.msg = msg;
     }
 
+
     public Integer getCode() {
         return code;
     }

@@ -22,7 +22,8 @@ public class MemberQuery extends BaseQuery {
     private Integer state;
 
     private String note;
-    private Integer orgId;
+
+    private String orgId;
     /**
      * 逻辑号
      */

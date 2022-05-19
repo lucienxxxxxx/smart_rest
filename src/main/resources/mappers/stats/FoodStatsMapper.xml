@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.stats.mapper.FoodStatsMapper">
+    <select id="selectModelPage" parameterType="com.pitaya.smart_rest.stats.query.FoodStatsQuery"
+            resultType="com.pitaya.smart_rest.stats.entity.FoodStats">
+        SELECT
+        CONCAT(#{query.startDateTime},'-',#{query.endDateTime}) AS date,
+	f.NAME food_name,
+	f.price,
+	sum( od.allowance_acc + od.cash_acc + od.virtual_acc + od.gift_acc + od.charge_acc ) price_amount,
+	count( * ) goods_amount
+        FROM
+            t_order_detail od
+            JOIN t_food f ON od.food_id = f.id
+            JOIN t_order o ON o.id = od.order_id
+            JOIN t_rfid_tuopan rt ON o.tuopan_id = rt.id
+            JOIN t_member m ON m.id = o.member_id
+        <where>
+            rt.res_id = #{query.resId}
+            <if test="query.orgId != null and query.orgId!='' ">
+                AND m.org_id LIKE CONCAT('%',#{query.orgId},'%')
+            </if>
+            <if test="query.memberType != null and query.memberType!='' ">
+                AND m.member_type LIKE CONCAT('%',#{query.memberType},'%')
+            </if>
+            <if test="query.startDateTime != null and query.startDateTime!='' ">
+                AND o.order_date &gt;= #{query.startDateTime}
+            </if>
+            <if test="query.endDateTime != null and query.endDateTime!='' ">
+                AND o.order_date &lt;= #{query.endDateTime}
+            </if>
+        </where>
+        GROUP BY
+            food_name
+    </select>
+
+</mapper>

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,16 +37,24 @@ public class StaffServiceImpl  extends ServiceImpl<StaffMapper, Member> implemen
     @Resource
     private UserMapper userMapper;
 
+    /**
+     * 切换状态
+     * @param id
+     * @param state
+     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void switchStatus(Integer id, Integer state) {
-        System.out.println(id+"/"+state);
         Member member = staffMapper.selectById(id);
         AssertUtil.isTrue(member==null,"该记录不存在");
         member.setState(state);
         AssertUtil.isTrue(staffMapper.updateById(member)!=1,"切换状态失败");
     }
 
+    /**
+     * 删除
+     * @param id
+     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void del(Integer id) {
@@ -54,6 +63,12 @@ public class StaffServiceImpl  extends ServiceImpl<StaffMapper, Member> implemen
         AssertUtil.isTrue(staffMapper.deleteById(id)!=1,"删除失败");
     }
 
+    /**
+     * 添加与更新
+     * @param member
+     * @param flag
+     * @param userId
+     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void addOrUpdate(Member member, Integer flag, Integer userId) {
@@ -61,13 +76,18 @@ public class StaffServiceImpl  extends ServiceImpl<StaffMapper, Member> implemen
         AssertUtil.isTrue(userId==null||user==null,"该用户不存在");
         //参数校验
         AssertUtil.isTrue(StringUtils.isBlank(member.getTrueName()), "真实姓名不能为空");
-        AssertUtil.isTrue( !PhoneUtil.isMobile(member.getMobile()), "手机号码格式不正确");
+        AssertUtil.isTrue(!PhoneUtil.isMobile(member.getMobile()), "手机号码格式不正确");
         if (flag == 0) {
             //添加
+            QueryWrapper<Member> memberQueryWrapper = new QueryWrapper<>();
+            memberQueryWrapper.eq("mobile",member.getMobile());
+            List<Member> members = staffMapper.selectList(memberQueryWrapper);
+            AssertUtil.isTrue(!members.isEmpty(),"该手机号码已被注册");
             member.setState(0);
             member.setMemberType(2);
             member.setResId(user.getResId());//设置所属餐厅
             member.setIsValid(1);
+            member.setWeChatId("0");
             member.setCreateDate(new Date());
             member.setUpdateDate(new Date());
             AssertUtil.isTrue(staffMapper.insert(member)!=1,"添加失败");
@@ -76,8 +96,23 @@ public class StaffServiceImpl  extends ServiceImpl<StaffMapper, Member> implemen
         }
     }
 
+    /**
+     * 表格渲染
+     * @param userId
+     * @param staffQuery
+     * @return
+     */
     @Override
     public Map<String, Object> queryList(Integer userId, StaffQuery staffQuery) {
+        //处理组织部分
+        if (staffQuery.getOrgId()!=null){
+            //System.out.println("处理之前："+memberQuery.getOrgId());
+            String[] org = staffQuery.getOrgId().split(",");
+            //只要最后的一位
+            staffQuery.setOrgId(org[org.length-1]);
+            //System.out.println("处理之后："+memberQuery.getOrgId());
+        }
+
         User user = userMapper.selectById(userId);
         QueryWrapper<Member> queryWrapper = new QueryWrapper<>();
         AssertUtil.isTrue(userId==null||user==null,"该用户不存在");
@@ -86,6 +121,9 @@ public class StaffServiceImpl  extends ServiceImpl<StaffMapper, Member> implemen
         queryWrapper.eq("member_type", 2);
         if (staffQuery.getState() != null) {
             queryWrapper.like("state", staffQuery.getState());
+        }
+        if (staffQuery.getOrgId() != null && !StringUtils.isBlank(staffQuery.getOrgId())) {
+            queryWrapper.like("org_id", staffQuery.getOrgId());
         }
         if (staffQuery.getTrueName() != null && !StringUtils.isBlank(staffQuery.getTrueName())) {
             queryWrapper.like("true_name", staffQuery.getTrueName());

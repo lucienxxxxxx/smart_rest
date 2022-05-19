@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.stats.mapper.RevenueMapper">
+    <select id="selectModelPage" resultType="com.pitaya.smart_rest.stats.entity.Revenue"
+            parameterType="com.pitaya.smart_rest.stats.query.RevenueQuery">
+    SELECT
+    date_format( o.order_date, '%Y-%m-%d' ) date,
+	count( DISTINCT ( o.id ) ) order_sum,
+	sum( od.virtual_acc + od.gift_acc + od.allowance_acc + od.cash_acc + od.charge_acc ) total,
+	sum( od.virtual_acc ) virtual_acc,
+	sum( od.gift_acc ) gift_acc,
+	sum( od.allowance_acc ) allowance_acc,
+	sum( od.cash_acc ) cash_acc,
+	sum( od.charge_acc ) charge_acc,
+	sum( r.virtual_acc + r.gift_acc + r.allowance_acc + r.cash_acc + r.charge_acc ) refund_total
+        FROM
+            t_order o
+            LEFT JOIN t_order_detail od ON o.id = od.order_id
+            LEFT JOIN t_member m ON o.member_id = m.id
+            LEFT JOIN t_rfid_tuopan rt ON rt.id = o.tuopan_id
+            LEFT JOIN t_refund r ON od.id = r.order_detail_id
+        <where>
+            rt.res_id = #{query.resId}
+            <if test="query.orgId != null and query.orgId!='' ">
+                AND m.org_id LIKE CONCAT('%',#{query.orgId},'%')
+            </if>
+            <if test="query.memberType != null and query.memberType!='' ">
+                AND m.member_type LIKE CONCAT('%',#{query.memberType},'%')
+            </if>
+            <if test="query.startDateTime != null and query.startDateTime!='' ">
+                AND o.order_date &gt;= #{query.startDateTime}
+            </if>
+            <if test="query.endDateTime != null and query.endDateTime!='' ">
+                AND o.order_date &lt;= #{query.endDateTime}
+            </if>
+        </where>
+        GROUP BY
+            date
+        ORDER BY
+            date DESC
+    </select>
+</mapper>

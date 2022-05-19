@@ -15,14 +15,16 @@ import com.pitaya.smart_rest.dingdan.mapper.OrderDetailMapper;
 import com.pitaya.smart_rest.dingdan.mapper.OrderMapper;
 import com.pitaya.smart_rest.dingdan.query.OrderQuery;
 import com.pitaya.smart_rest.system.entity.Module;
+import com.pitaya.smart_rest.system.entity.Org;
 import com.pitaya.smart_rest.system.entity.User;
-import com.pitaya.smart_rest.system.mapper.ModuleMapper;
-import com.pitaya.smart_rest.system.mapper.RoleMapper;
-import com.pitaya.smart_rest.system.mapper.UserMapper;
+import com.pitaya.smart_rest.system.mapper.*;
 import com.pitaya.smart_rest.system.model.ModuleTree;
+import com.pitaya.smart_rest.system.model.OrgModel;
+import com.pitaya.smart_rest.system.model.ResModel;
 import com.pitaya.smart_rest.system.service.impl.OrgServiceImpl;
 import com.pitaya.smart_rest.system.service.impl.PermissionServiceImpl;
 import com.pitaya.smart_rest.system.service.impl.UserServiceImpl;
+import com.pitaya.smart_rest.utils.ArithmeticUtils;
 import com.pitaya.smart_rest.utils.AssertUtil;
 import com.pitaya.smart_rest.utils.CountUtil;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +63,55 @@ class SmartRestApplicationTests {
     private FoodTagServiceImpl foodTagService;
     @Autowired
     private PermissionServiceImpl permissionService;
+    @Resource
+    private RestaurantMapper restaurantMapper;
+    @Resource
+    private OrgMapper orgMapper;
 
     @Test
+    void getOrgs(){
+        //所有组织列表
+        List<Org> orgList = orgMapper.selectList(null);
+        List<OrgModel> result=new ArrayList<>();
+        //查找出所有父类列表
+        orgList.forEach(org -> {
+            if (org.getParentId()==-1){
+                OrgModel orgModel = new OrgModel();
+                orgModel.setValue(org.getId());
+                orgModel.setLabel(org.getOrgName());
+                result.add(orgModel);
+            }
+        });
+        result.forEach(r->{
+            r.setChildren(getChild(r.getValue(), orgList));
+        });
+
+        System.out.println(result);
+
+    }
+
+    private List<OrgModel> getChild(Integer pid,List<Org> orgList) {
+        List<OrgModel> childOrg = new ArrayList<>();
+        orgList.forEach(org -> {
+            if (pid==org.getParentId()){
+                OrgModel orgModel = new OrgModel();
+                orgModel.setValue(org.getId());
+                orgModel.setLabel(org.getOrgName());
+                childOrg.add(orgModel);
+            }
+        });
+        childOrg.forEach(c->{
+            c.setChildren(getChild(c.getValue(),orgList));
+        });
+        if (childOrg.size()==0){
+            return null;
+        }
+        return childOrg;
+    }
+    @Test
     void contextLoads() {
-        List<ModuleTree> maps = permissionService.queryModelPermissions(2);
-        System.out.println(maps);
+        List<ResModel> list1 = restaurantMapper.selectAllRes();
+        System.out.println(list1);
     }
 
     @Test

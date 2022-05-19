@@ -31,7 +31,7 @@ public class OrderModel {
 
     private String comments;//评论
 
-    private String tuopanId;//托盘卡卡号
+    private Integer tuopanId;//托盘卡卡号
 
     /**
      * 五类账号消费情况

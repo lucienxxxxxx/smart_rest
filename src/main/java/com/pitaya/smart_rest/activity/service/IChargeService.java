@@ -2,6 +2,7 @@ package com.pitaya.smart_rest.activity.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pitaya.smart_rest.activity.query.ChargeQuery;
 import com.pitaya.smart_rest.base.BaseQuery;
 import com.pitaya.smart_rest.guke.entity.Member;
 
@@ -15,8 +16,9 @@ import java.util.Map;
  * @Version 1.0版本
  */
 public interface IChargeService extends IService<Member> {
-    Map<String, Object> queryList(Integer userId, BaseQuery query);
+    Map<String, Object> queryList(Integer userId, ChargeQuery query);
 
+    void chargeSingle(Integer userId,String id, Float virtualAcc, Float giftAcc, Float allowanceAcc, Float cashAcc, Float chargeAcc);
 
-    void charge(String ids, Float virtualAcc, Float giftAcc, Float allowanceAcc, Float cashAcc, Float chargeAcc);
+    void charge(Integer userId, String ids, Float virtualAcc, Float giftAcc, Float allowanceAcc, Float cashAcc, Float chargeAcc);
 }

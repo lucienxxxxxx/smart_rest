@@ -22,6 +22,7 @@ public class OfflineMemberModel {
 
     private Integer orgId;
 
+    private String orgName="没有组织";
 
     private Integer resId;
 

@@ -205,10 +205,15 @@ public class OrderDetailServiceImpl extends ServiceImpl<OrderDetailMapper, Order
         QueryWrapper<OrderDetail> queryWrapper = new QueryWrapper<OrderDetail>();
         queryWrapper.eq("order_id",orderId);
         List<OrderDetail> orderDetails = orderDetailMapper.selectList(queryWrapper);
+
         //遍历调用子订单退款
         orderDetails.forEach(od -> {
             Float total = CountUtil.floatAdd(new Float[]{od.getCashAcc(),od.getChargeAcc(),od.getVirtualAcc(),od.getAllowanceAcc(),od.getGiftAcc()});
-            this.refund(od.getId(),total);
+            //状态为2的就不能退款
+            if (od.getOrderDetailState()!=2){
+                //退款操作
+                this.refund(od.getId(),total);
+            }
         });
     }
 }

@@ -103,26 +103,25 @@
             url: '${ctx}/dingdan/order/list',
             page: true,
             toolbar: true,
-
             cellMinWidth: 100,
             cols: [[
-                {fixed: 'left', field: 'id', align: 'center', sort: true, title: '订单号', minWidth: 200},
-                {field: 'memberId', align: 'center', sort: true, title: '会员号'},
-                {field: 'mobile', align: 'center', sort: true, title: '手机号', minWidth: 150},
-                {field: 'tuopanId', align: 'center', sort: true, title: '托盘号'},
-                {field: 'orderDate', sort: true, align: 'center', title: '创建时间', minWidth: 200},
-                {field: 'total', align: 'center', sort: true, title: '消费总额', templet: function (d) {
+                {fixed: 'left', field: 'id', align: 'center',title: '订单号', minWidth: 200},
+                {field: 'memberId', align: 'center',title: '会员号'},
+                {field: 'mobile', align: 'center',title: '手机号', minWidth: 150},
+                {field: 'tuopanId', align: 'center',title: '托盘号'},
+                {field: 'orderDate',  align: 'center', title: '创建时间', minWidth: 200},
+                {field: 'total', align: 'center',title: '消费总额', templet: function (d) {
                         if (d.total == null) {
                             d.total =0
                         }
                         var str = '<span style="font-weight: bold">'+d.total +'元</span>'
                         return str}, totalRow: true},
-                {field: 'refundTotal', align: 'center', sort: true, title: '退款总额', templet: function (d) {if (d.refundTotal==null){return '0元'}return d.refundTotal + '元'}, totalRow: true},
-                {field: 'state', title: '状态', templet: function (d) {
+                {field: 'refundTotal', align: 'center',title: '退款总额', templet: function (d) {if (d.refundTotal==null){return '0元'}return d.refundTotal + '元'}, totalRow: true},
+                {field: 'state', title: '状态', align: 'center', templet: function (d) {
                         var strs = [
-                            '<span style="color: #189700">订单完成</span>',
-                            '<span style="color: #af0000">请求退款</span>',
-                            '<span style="color: #0e2fe5">退款成功</span>'
+                            '<span style="color: green">订单完成</span>',
+                            '<span style="color: red">请求退款</span>',
+                            '<span style="color: blue">退款成功</span>'
                         ];
                         return strs[d.state];}, title: '状态'},
                 {fixed: 'right', align: 'center', toolbar: '#tableBarTbAdv', title: '操作'}

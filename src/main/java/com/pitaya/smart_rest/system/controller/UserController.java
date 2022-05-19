@@ -117,4 +117,17 @@ public class UserController extends BaseController {
         userService.updatePassWord(userId, oldPassword, newPassword, repeatPassword);
         return resultInfo;
     }
+
+    /**
+     * 修改状态
+     *
+     * @param
+     * @return
+     */
+    @PostMapping("switchStatus")
+    @ResponseBody
+    public ResultInfo switchStatus(Integer id,Integer state) {
+        userService.switchStatus(id,state);
+        return success("修改状态成功");
+    }
 }

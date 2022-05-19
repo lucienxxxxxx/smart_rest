@@ -4,6 +4,7 @@ package com.pitaya.smart_rest.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.pitaya.smart_rest.base.ResultInfo;
 import com.pitaya.smart_rest.system.entity.Org;
+import com.pitaya.smart_rest.system.model.OrgModel;
 import com.pitaya.smart_rest.system.query.OrgQuery;
 import com.pitaya.smart_rest.system.service.impl.OrgServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,23 @@ import java.util.Map;
 public class OrgController extends BaseController {
     @Autowired
     private OrgServiceImpl orgService;
+
+    @GetMapping("getOrgNameById")
+    @ResponseBody
+    public ResultInfo getOrgNameById(Integer id){
+        Org org = orgService.getById(id);
+        return success("成功",org.getOrgName());
+    }
+
+    /**
+     * 获取组织列表（用于搜索下拉菜单渲染）
+     * @return
+     */
+    @GetMapping("getAllOrgList")
+    @ResponseBody
+    public List<OrgModel> getAllOrgList(){
+        return orgService.getAllOrgList();
+    }
 
     /**
      * 主页

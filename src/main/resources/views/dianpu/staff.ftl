@@ -26,6 +26,12 @@
                             <input name="trueName" class="layui-input" type="text" placeholder="请输入真实姓名"/>
                         </div>
                     </div>
+<#--                    <div class="layui-inline">-->
+<#--                        <label class="layui-form-label w-auto">所属机构:</label>-->
+<#--                        <div class="layui-input-inline mr0">-->
+<#--                            <input name="orgId" id="selectOrg" placeholder="请选择" class="layui-hide"/>-->
+<#--                        </div>-->
+<#--                    </div>-->
                     <div class="layui-inline">
                         <label class="layui-form-label w-auto">电话号码:</label>
                         <div class="layui-input-inline mr0">
@@ -39,7 +45,7 @@
                         </div>
                     </div>
                     <div class="layui-inline ">
-                        <label class="layui-form-label">状&emsp;&emsp;态：</label>
+                        <label class="layui-form-label w-auto">状&emsp;&emsp;态：</label>
                         <div class="layui-input-inline">
                             <select name="state">
                                 <option value="">所有</option>
@@ -125,13 +131,13 @@
 
 <!-- js部分 -->
 <script>
-    layui.use(['layer', 'form', 'table', 'util', 'admin', 'formSelects', "xmSelect"], function () {
+    layui.use(['layer', 'form', 'table', 'util', 'admin', 'formSelects', "xmSelect",'cascader'], function () {
         var $ = layui.jquery;
         var layer = layui.layer;
         var form = layui.form;
         var table = layui.table;
         var admin = layui.admin;
-
+        var cascader = layui.cascader;
         // 渲染表格
         var insTb = table.render({
             elem: '#tableUser',
@@ -140,16 +146,16 @@
             toolbar: true,
             cellMinWidth: 100,
             cols: [[
-                {field: 'trueName', sort: true, title: '真实姓名'},
-                {field: 'mobile', sort: true, title: '手机号'},
+                {field: 'trueName', align: 'center', title: '真实姓名'},
+                {field: 'mobile', align: 'center', title: '手机号'},
                 {field: 'virtualAcc', align: 'center', sort: true, title: '虚拟账户',templet:function (d) {return d.virtualAcc+'元'} , totalRow: true},
                 {field: 'giftAcc', align: 'center', sort: true, title: '赠送账户',templet:function (d) {return d.giftAcc+'元'} , totalRow: true},
                 {field: 'allowanceAcc', align: 'center', sort: true, title: '补贴账户', templet:function (d) {return d.allowanceAcc+'元'} ,totalRow: true},
                 {field: 'cashAcc', align: 'center', sort: true, title: '现金账户',templet:function (d) {return d.cashAcc+'元'} ,totalRow: true},
                 {field: 'chargeAcc', align: 'center', sort: true, title: '充值账户',templet:function (d) {return d.chargeAcc+'元'} , totalRow: true},
-                {field: 'note', sort: true, title: '描述'},
+                {field: 'note', align: 'center', title: '描述'},
                 {
-                    field: 'state', title: '状态', templet: function (d) {
+                    field: 'state', title: '状态',align: 'center', templet: function (d) {
                         var strs = [
                             '<span style="color: #189700">启用</span>',
                             '<span style="color: #af0000">禁用</span>',
@@ -275,6 +281,17 @@
                 }
             });
         }
+
+        /**
+         * 渲染组织下拉菜单
+         */
+        $.get('${ctx}/system/org/getAllOrgList',function (orgData){
+            cascader.render({
+                elem: '#selectOrg',
+                data: orgData,
+                filterable: true
+            });
+        })
 
     });
 

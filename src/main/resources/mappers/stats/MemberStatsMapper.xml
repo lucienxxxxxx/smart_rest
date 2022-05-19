@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.stats.mapper.MemberStatsMapper">
+    <select id="selectModelPage" resultType="com.pitaya.smart_rest.stats.entity.MemberStats"
+            parameterType="com.pitaya.smart_rest.stats.query.MemberStatsQuery">
+        SELECT elt(INTERVAL(total, 0, 51, 101, 201, 301, 401, 501,701,801,1001,1201,1500), '0~50', '51~100', '101~200', '201~300', '301~400', '401~500', '501~600','701~800','801~1000','1001~1200','1201~1500','1500以上') as total_level, count(*) as counts FROM
+            (
+                SELECT
+                    sum( od.virtual_acc + od.gift_acc + od.allowance_acc + od.cash_acc + od.charge_acc ) AS total,
+                    o.member_id member_id
+                FROM
+                    t_order o
+                        JOIN t_order_detail od ON od.order_id = o.id
+                        JOIN t_member m on m.id=o.member_id
+                        LEFT JOIN t_rfid_tuopan rt on rt.id=o.tuopan_id
+                <where>
+                    rt.res_id=#{query.resId}
+                    <if test="query.startDateTime != null and query.startDateTime!='' ">
+                        AND order_date &gt;= #{query.startDateTime}
+                    </if>
+                    <if test="query.endDateTime != null and query.endDateTime!='' ">
+                        AND order_date &lt;= #{query.endDateTime}
+                    </if>
+                    <if test="query.orgId != null and query.orgId!='' ">
+                        AND m.org_id LIKE CONCAT('%',#{query.orgId},'%')
+                    </if>
+                </where>
+                GROUP BY
+                    o.member_id
+            ) a
+        GROUP BY total_level
+    </select>
+</mapper>

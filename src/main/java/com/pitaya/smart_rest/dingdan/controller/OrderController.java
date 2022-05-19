@@ -5,6 +5,7 @@ import com.pitaya.smart_rest.base.ResultInfo;
 import com.pitaya.smart_rest.dingdan.entity.Order;
 import com.pitaya.smart_rest.dingdan.query.OrderQuery;
 import com.pitaya.smart_rest.dingdan.service.impl.OrderServiceImpl;
+import com.pitaya.smart_rest.utils.LoginUserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,8 +43,9 @@ public class OrderController extends BaseController {
 
     @GetMapping("list")
     @ResponseBody
-    public Map<String, Object> list(OrderQuery orderQuery) {
-        return orderService.queryAllOrderByParams(orderQuery);
+    public Map<String, Object> list(HttpServletRequest request,OrderQuery orderQuery) {
+        Integer userId = LoginUserUtil.releaseUserIdFromCookie(request);
+        return orderService.queryAllOrderByParams(userId,orderQuery);
     }
 
     /**

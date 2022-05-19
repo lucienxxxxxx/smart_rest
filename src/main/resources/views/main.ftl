@@ -38,180 +38,57 @@
                     <dd lay-unselect><a class="login-out">退出</a></dd>
                 </dl>
             </li>
-<#--            <li class="layui-nav-item" lay-unselect>-->
-<#--                <a ew-event="theme" title="主题"><i class="layui-icon layui-icon-more-vertical"></i></a>-->
-<#--            </li>-->
+            <#--            <li class="layui-nav-item" lay-unselect>-->
+            <#--                <a ew-event="theme" title="主题"><i class="layui-icon layui-icon-more-vertical"></i></a>-->
+            <#--            </li>-->
         </ul>
     </div>
 
     <!-- 侧边栏 -->
     <div class="layui-side">
         <div class="layui-side-scroll">
-            <#-- 判断当前登录用户是否拥有权限 -->
-            <#if permissions??>
-            <ul class="layui-nav layui-nav-tree arrow2" lay-filter="admin-side-nav" lay-shrink="all">
-                <#-- 通过freemarker中的seq_contains内建指令判断菜单是否显示 -->
-                <#if permissions?seq_contains("10") >
+            <ul class="layui-nav layui-nav-tree" lay-filter="admin-side-nav" lay-shrink="_all">
+                <#list menus as menu>
                     <li class="layui-nav-item">
-                        <a><i class="layui-icon layui-icon-set"></i>&emsp;<cite>系统管理</cite></a>
-                        <dl class="layui-nav-child">
-                            <#if permissions?seq_contains("1010")>
-                                <dd><a lay-href="${ctx}/system/org/index">机构管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("1020")>
-                                <dd><a lay-href="${ctx}/system/user/index">用户管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("1030")>
-                                <dd><a lay-href="${ctx}/system/role/index">角色管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("1040")>
-                                <dd><a lay-href="${ctx}/system/module/index">权限管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("1050")>
-                                <dd><a lay-href="${ctx}/system/setting/index">系统设置</a></dd>
-                            </#if>
-                        </dl>
-                    </li>
-                </#if>
-                <#if permissions?seq_contains("20") >
-                    <li class="layui-nav-item">
-                        <a><i class="layui-icon layui-icon-template"></i>&emsp;<cite>店铺管理</cite></a>
-                        <dl class="layui-nav-child">
-                            <#if permissions?seq_contains("2010")>
-                                <dd><a lay-href="${ctx}/dianpu/terminal/index">终端管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("2020")>
-                                <dd><a lay-href="${ctx}/dianpu/tuopan/index">托盘管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("2030") >
-                            <dd><a lay-href="${ctx}/dianpu/staff/index">员工管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("2040") >
-                            <dd><a lay-href="${ctx}/dianpu/rfid-user/index">管理卡管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("2050") >
-                            <dd><a lay-href="${ctx}/system/restaurant/index">店铺参数设置</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("2060") >
-                                <dd><a lay-href="${ctx}/system/foodSetting1/index.html">店铺设置</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("2070") >
-                                <dd>
-                                    <a>档口管理</a>
-                                    <dl class="layui-nav-child">
-                                        <#if permissions?seq_contains("207010") >
-                                            <dd><a lay-href="${ctx}/dianpu/food/index">菜品管理</a></dd>
+
+                        <#if menu.url??>
+                            <a lay-href="${ctx}${menu.url!""}"><i
+                                        class="${menu.icon!""}"></i>&emsp;<cite>${menu.name!""}</cite>
+                            </a>
+                        <#else >
+                            <a lay-href="javascript:;"><i class="${menu.icon!""}"></i>&emsp;<cite>${menu.name!""}</cite>
+                            </a>
+                        </#if>
+
+                        <#if menu.subMenus?? && menu.subMenus?size!=0>
+                            <dl class="layui-nav-child">
+                                <#list menu.subMenus as subMenu>
+                                    <dd>
+                                        <#if subMenu.url??>
+                                            <a lay-href="${ctx}${subMenu.url!""}">${subMenu.name!""}</a>
+                                        <#else >
+                                            <a lay-href="javascript:;">${subMenu.name!""}</a>
                                         </#if>
-                                        <#if permissions?seq_contains("207020") >
-                                            <dd><a lay-href="${ctx}/dianpu/foodTag/index">菜品标签管理</a></dd>
+                                        <#if subMenu.subMenus?? && subMenu.subMenus?size!=0>
+                                            <dl class="layui-nav-child">
+                                                <#list subMenu.subMenus as temp>
+                                                    <dd>
+                                                        <#if temp.url??>
+                                                            <a lay-href="${ctx}${temp.url!""}"> ${temp.name!""}</a>
+                                                        <#else >
+                                                            <a lay-href="javascript:;">${temp.name!""}</a>
+                                                        </#if>
+                                                    </dd>
+                                                </#list>
+                                            </dl>
                                         </#if>
-                                    </dl>
-                                </dd>
-                            </#if>
-                        </dl>
+                                    </dd>
+                                </#list>
+                            </dl>
+                        </#if>
                     </li>
-                </#if>
-                <#if permissions?seq_contains("30") >
-                    <li class="layui-nav-item">
-                        <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>充值活动</cite></a>
-                        <dl class="layui-nav-child">
-                            <#if permissions?seq_contains("3010") >
-                            <dd><a lay-href="${ctx}/system/charge1/index.html">充值优惠</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("3020") >
-                            <dd><a lay-href="${ctx}/system/consumption1/index.html">消费设置</a></dd>
-                            </#if>
-                        </dl>
-                    </li>
-                </#if>
-                <#if permissions?seq_contains("40") >
-                    <li class="layui-nav-item">
-                        <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>订单管理</cite></a>
-                        <dl class="layui-nav-child">
-                            <#if permissions?seq_contains("4010") >
-                            <dd><a lay-href="${ctx}/dingdan/order/index">订单管理</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("4020") >
-                            <dd><a lay-href="${ctx}/system/consumption/index.html">退款单管理</a></dd>
-                            </#if>
-                        </dl>
-                    </li>
-                </#if>
-                <#if permissions?seq_contains("50") >
-                    <li class="layui-nav-item">
-                        <a><i class="layui-icon layui-icon-component"></i>&emsp;<cite>统计管理</cite></a>
-                        <dl class="layui-nav-child">
-                            <#if permissions?seq_contains("5010") >
-                            <dd><a lay-href="${ctx}/system/charge3/index.html">餐别统计</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("5020") >
-                            <dd><a lay-href="${ctx}/system/consumption1/index.html">充值统计</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("5030") >
-                            <dd><a lay-href="${ctx}/system/consumption2/index.html">会员统计</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("5040") >
-                            <dd><a lay-href="${ctx}/system/consumption3/index.html">商品统计</a></dd>
-                            </#if>
-                            <#if permissions?seq_contains("5060") >
-                            <dd><a lay-href="${ctx}/system/consumption4/index.html">营收统计</a></dd>
-                            </#if>
-                        </dl>
-                    </li>
-                </#if>
-                <#if permissions?seq_contains("60") >
-                    <li class="layui-nav-item">
-                        <a><i class="layui-icon layui-icon-app"></i>&emsp;<cite>顾客管理</cite></a>
-                        <dl class="layui-nav-child">
-                            <#if permissions?seq_contains("6010") >
-                            <dd>
-                                <a>线下会员</a>
-                                <dl class="layui-nav-child">
-                                    <#if permissions?seq_contains("601010") >
-                                    <dd><a lay-href="${ctx}/system/charge4/index.html">资金管理</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("601020") >
-                                    <dd><a lay-href="${ctx}/system/consumption11/index.html">余额变动</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("601030") >
-                                    <dd><a lay-href="${ctx}/guke/offlineMember/index">会员管理</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("601040") >
-                                    <dd><a lay-href="${ctx}/system/consumption31/index.html">会员评论</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("601050") >
-                                    <dd><a lay-href="${ctx}/system/consumption41/index.html">会员卡挂失</a></dd>
-                                    </#if>
-                                </dl>
-                            </dd>
-                            </#if>
-                            <#if permissions?seq_contains("6020") >
-                            <dd>
-                                <a>线上会员</a>
-                                <dl class="layui-nav-child">
-                                    <#if permissions?seq_contains("602010") >
-                                    <dd><a lay-href="${ctx}/guke/onlineMember/index">会员管理</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("602020") >
-                                    <dd><a lay-href="${ctx}/system/consumption1/index.html">会员评论</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("602030") >
-                                    <dd><a lay-href="${ctx}/system/consumption21/index.html">会员提现</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("602040") >
-                                    <dd><a lay-href="${ctx}/system/consumption3/index.html">实时余额</a></dd>
-                                    </#if>
-                                    <#if permissions?seq_contains("602050") >
-                                    <dd><a lay-href="${ctx}/system/consumption4/index.html">资金管理</a></dd>
-                                    </#if>
-                                </dl>
-                            </dd>
-                            </#if>
-                        </dl>
-                    </li>
-                </#if>
+                </#list>
             </ul>
-            </#if>
         </div>
     </div>
 
@@ -233,11 +110,11 @@
 
 
 <script>
-    layui.use(['index', 'jquery_cookie','admin'], function () {
+    layui.use(['index', 'jquery_cookie', 'admin'], function () {
         var $ = layui.jquery;
         var $ = layui.jquery_cookie($);
         var index = layui.index;
-        var Index =index
+        var Index = index
         // 默认加载主页
         index.loadHome({
             menuPath: '${ctx}/welcome',

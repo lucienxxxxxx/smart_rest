@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pitaya.smart_rest.stats.mapper.MealTimeMapper">
+
+    <select id="selectModelPage" parameterType="com.pitaya.smart_rest.stats.query.MealTimeQuery"
+            resultType="com.pitaya.smart_rest.stats.entity.MealTime">
+        SELECT
+            date,
+            sum( bre_total ) breakfast_total,
+            sum( bre_num ) breakfast_num,
+            sum( lun_total ) lunch_total,
+            sum( lun_num ) lunch_num,
+            sum( din_total ) dinner_total,
+            sum( din_num ) dinner_num
+        FROM
+            (
+            SELECT
+            date_format( o.order_date, '%Y-%m-%d' ) AS date,
+            sum( od.virtual_acc + od.gift_acc + od.allowance_acc + od.cash_acc + od.charge_acc )  AS bre_total,
+            count( distinct o.id ) AS bre_num,
+            0 AS lun_total,
+            0 AS lun_num,
+            0 AS din_total,
+            0 AS din_num
+            FROM
+            t_order o
+            LEFT JOIN t_order_detail od ON o.id = od.order_id
+            LEFT JOIN t_member m ON o.member_id = m.id
+            LEFT JOIN t_rfid_tuopan rt ON rt.id = o.tuopan_id
+            LEFT JOIN t_restaurant res ON rt.res_id = res.id
+            <where>
+                res.id = #{query.resId}
+                AND date_format( o.order_date, '%H:%i:%s' ) BETWEEN '00:00:00'
+                AND res.breakfast_end
+                <if test="query.orgId != null and query.orgId!='' ">
+                    AND m.org_id LIKE CONCAT('%',#{query.orgId},'%')
+                </if>
+                <if test="query.memberType != null and query.memberType!='' ">
+                    AND m.member_type LIKE CONCAT('%',#{query.memberType},'%')
+                </if>
+            </where>
+            GROUP BY
+            date UNION ALL
+            SELECT
+            date_format( o.order_date, '%Y-%m-%d' ) AS date,
+            0 AS bre_total,
+            0 AS bre_num,
+            sum( od.virtual_acc + od.gift_acc + od.allowance_acc + od.cash_acc + od.charge_acc )  AS lun_total,
+            count( distinct o.id ) AS lun_num,
+            0 AS din_total,
+            0 AS din_num
+            FROM
+            t_order o
+            LEFT JOIN t_order_detail od ON o.id = od.order_id
+            LEFT JOIN t_member m ON o.member_id = m.id
+            LEFT JOIN t_rfid_tuopan rt ON rt.id = o.tuopan_id
+            LEFT JOIN t_restaurant res ON rt.res_id = res.id
+            <where>
+                res.id = #{query.resId}
+                AND date_format( o.order_date, '%H:%i:%s' ) BETWEEN res.breakfast_end
+                AND res.lunch_end
+                <if test="query.orgId != null and query.orgId!='' ">
+                    AND m.org_id LIKE CONCAT('%',#{query.orgId},'%')
+                </if>
+                <if test="query.memberType != null and query.memberType!='' ">
+                    AND m.member_type LIKE CONCAT('%',#{query.memberType},'%')
+                </if>
+            </where>
+
+
+            GROUP BY
+            date UNION ALL
+            SELECT
+            date_format( o.order_date, '%Y-%m-%d' ) AS date,
+            0 AS bre_total,
+            0 AS bre_num,
+            0 AS lun_total,
+            0 AS lun_num,
+            sum( od.virtual_acc + od.gift_acc + od.allowance_acc + od.cash_acc + od.charge_acc ) AS din_total,
+            count( distinct o.id ) AS din_num
+            FROM
+            t_order o
+            LEFT JOIN t_order_detail od ON o.id = od.order_id
+            LEFT JOIN t_member m ON o.member_id = m.id
+            LEFT JOIN t_rfid_tuopan rt ON rt.id = o.tuopan_id
+            LEFT JOIN t_restaurant res ON rt.res_id = res.id
+            <where>
+                res.id = #{query.resId}
+                AND date_format( o.order_date, '%H:%i:%s' ) BETWEEN res.lunch_end
+                AND '24:00:00'
+                <if test="query.orgId != null and query.orgId!='' ">
+                    AND m.org_id LIKE CONCAT('%',#{query.orgId},'%')
+                </if>
+                <if test="query.memberType != null and query.memberType!='' ">
+                    AND m.member_type LIKE CONCAT('%',#{query.memberType},'%')
+                </if>
+            </where>
+            GROUP BY
+            date
+            ) meal_time_table
+        <where>
+            date =date
+            <if test="query.startDateTime != null and query.startDateTime!='' ">
+                AND date &gt;= #{query.startDateTime}
+            </if>
+            <if test="query.endDateTime != null and query.endDateTime!='' ">
+                AND date &lt;= #{query.endDateTime}
+            </if>
+        </where>
+        GROUP BY
+            date
+        ORDER BY
+            date DESC
+    </select>
+</mapper>

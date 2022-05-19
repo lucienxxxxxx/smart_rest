@@ -16,10 +16,10 @@ import java.util.Date;
 @Data
 public class OrderQuery extends BaseQuery {
     private String id;
-    private Integer memberId;
+    private String memberId;
     private String orderDate;
     private Integer state;
-    private String tuopanId;
+    private Integer tuopanId;
     private String mobile;
     private String endDate;
 }

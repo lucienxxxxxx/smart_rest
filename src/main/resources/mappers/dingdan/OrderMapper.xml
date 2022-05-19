@@ -23,11 +23,13 @@
         left join t_order_detail od on o.id=od.order_id
         LEFT JOIN t_member m ON o.member_id = m.id
         LEFT JOIN t_refund r ON r.order_detail_id = od.id
+        LEFT JOIN t_rfid_tuopan rt ON rt.id = o.tuopan_id
         <where>
+            rt.res_id=#{orderQuery.resId}
             <if test="orderQuery.id != null and orderQuery.id!=''">
                 AND o.id LIKE CONCAT('%',#{orderQuery.id},'%')
             </if>
-            <if test="orderQuery.memberId != null">
+            <if test="orderQuery.memberId != null and orderQuery.memberId!=''">
                 AND o.member_id LIKE CONCAT('%',#{orderQuery.memberId},'%')
             </if>
             <if test="orderQuery.state != null">

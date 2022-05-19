@@ -14,15 +14,26 @@
                m.cash_acc,
                m.charge_acc,
                m.state,
+               o.org_name,
                (m.virtual_acc + m.gift_acc + m.allowance_acc + m.cash_acc + m.charge_acc) as total
-        from t_member m
+        from t_member m left join t_org o on m.org_id=o.id
         <where>
+            m.id=m.id
             <if test="query.keyword!=null and query.keyword!=''">
-                m.mobile like CONCAT('%',#{query.keyword},'%')
+                AND m.mobile like CONCAT('%',#{query.keyword},'%')
                 OR  m.true_name like CONCAT('%',#{query.keyword},'%')
+                OR  m.id like CONCAT('%',#{query.keyword},'%')
+            </if>
+            <if test="query.orgId != null and query.orgId!=''">
+                AND m.org_id LIKE CONCAT('%',#{query.orgId},'%')
+            </if>
+            <if test="query.memberType != null ">
+                AND m.member_type = #{query.memberType}
             </if>
         </where>
-        order by m.create_date
+        ORDER BY m.member_type
 
     </select>
+    
+
 </mapper>

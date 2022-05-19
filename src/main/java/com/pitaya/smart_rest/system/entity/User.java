@@ -96,6 +96,7 @@ public class User implements Serializable {
     private Integer isValid;
 
     private Integer resId;
+
     @TableField(exist = false)
     private String roleIds; // 用户对应的角色ID
 }
